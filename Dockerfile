@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     make \
+    libpcap-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy source files of the project to the container
