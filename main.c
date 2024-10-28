@@ -34,6 +34,21 @@ int sampleFuncUsingLibpcap()
         return 2;
     }
 
+    // Apply the filter to capture only DNS packets
+    struct bpf_program fp;
+    char filter_exp[] = "udp port 53";
+    if (pcap_compile(handle, &fp, filter_exp, 0, PCAP_NETMASK_UNKNOWN) == -1)
+    {
+        fprintf(stderr, "Couldn't parse filter %s: %s\n", filter_exp, pcap_geterr(handle));
+        return 1;
+    }
+
+    if (pcap_setfilter(handle, &fp) == -1)
+    {
+        fprintf(stderr, "Couldn't install filter %s: %s\n", filter_exp, pcap_geterr(handle));
+        return 1;
+    }
+
     // Capture packets in an infinite loop (can set to specific number if desired)
     pcap_loop(handle, 10, packet_handler, NULL); // Capture 10 packets
 
@@ -49,7 +64,7 @@ int main(int argc, char** argv)
     printf("%s START\n", funcName);
 
     int ret = sampleFuncUsingLibpcap();
-    printf("%s the sample function returned:%d\n", ret, funcName);
+    printf("%s the sample function returned:%d\n", funcName, ret);
     
     printf("%s END\n", funcName);
     return 0;
