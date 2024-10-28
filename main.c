@@ -46,8 +46,11 @@ int sampleFuncUsingLibpcap()
 int main(int argc, char** argv)
 {
     const char funcName [] = "main - ";
-    printf("%s start\n", funcName);
+    printf("%s START\n", funcName);
 
-    printf("%s end\n", funcName);
+    int ret = sampleFuncUsingLibpcap();
+    printf("%s the sample function returned:%d\n", ret, funcName);
+    
+    printf("%s END\n", funcName);
     return 0;
 }
