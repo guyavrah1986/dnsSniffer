@@ -1,12 +1,56 @@
 #include <stdio.h>
-#include <pcap.h>
 #include <stdlib.h>
+
 #include <arpa/inet.h>
+
+#include <pcap.h>
+#include <netinet/ip.h>
+#include <netinet/udp.h>
+
+// Utilities:
+
+int parseDnsPacket(u_char *user, const struct pcap_pkthdr *pkthdr, const u_char *packet)
+{
+    // Get IP header
+    struct ip *ip_header = (struct ip *)(packet + 14); // Skip Ethernet header (14 bytes)
+    int ip_header_len = ip_header->ip_hl * 4;
+
+    // Get UDP header
+    struct udphdr *udp_header = (struct udphdr *)(packet + 14 + ip_header_len);
+    int udp_header_len = sizeof(struct udphdr);
+
+    // DNS packet starts after UDP header
+    const u_char *dns_payload = packet + 14 + ip_header_len + udp_header_len;
+
+    // DNS header is 12 bytes
+    unsigned short dns_flags = ntohs(*(unsigned short *)(dns_payload + 2));
+
+    if ((dns_flags & 0x8000) == 0)
+    {
+        printf("Captured a DNS query packet\n");
+        return 0;
+    }
+    else
+    {
+        printf("Captured a DNS response packet\n");
+        return 1;
+    }
+}
 
 void packet_handler(u_char *user_data, const struct pcap_pkthdr *pkthdr, const u_char *packet)
 {
-    printf("Captured a packet with length of [%d]\n", pkthdr->len);
+    const char funcName [] = "packet_handler - ";
+    printf("%s captured a packet with length of [%d]\n", funcName, pkthdr->len);
     // Additional processing on 'packet' can be done here
+    int res = parseDnsPacket(user_data, pkthdr, packet);
+    if (1 == res)
+    {
+        printf("%s captured DNS RESPONSE\n", funcName);
+    }
+    else
+    {
+        printf("%s captured DNS QUERY\n", funcName);
+    }
 }
 
 int sampleFuncUsingLibpcap()
@@ -50,7 +94,8 @@ int sampleFuncUsingLibpcap()
     }
 
     // Capture packets in an infinite loop (can set to specific number if desired)
-    pcap_loop(handle, 10, packet_handler, NULL); // Capture 10 packets
+    int numPacketsToCapture = 2;
+    pcap_loop(handle, numPacketsToCapture, packet_handler, NULL); // Capture 10 packets
 
     // Close the handle
     pcap_close(handle);
