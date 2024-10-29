@@ -6,6 +6,7 @@ pwd
 echo "its content is:"
 ls -l
 
+rm -rf build/
 mkdir build
 cd build
 echo "current working dir NOW is:"
