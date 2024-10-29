@@ -53,3 +53,4 @@ dkms.conf
 
 # GuyA: added to be ignored
 build/
+.vscode/

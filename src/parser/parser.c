@@ -1,17 +1,17 @@
 #include "include/parser.h"
 
-int parseDnsPacket(unsigned char *user, const struct pcap_pkthdr *pkthdr, const unsigned char *packet)
+int parseDnsPacket(const struct pcap_pkthdr *pkthdr, const unsigned char *packet)
 {
     // Get IP header
     struct ip *ip_header = (struct ip *)(packet + 14); // Skip Ethernet header (14 bytes)
     int ip_header_len = ip_header->ip_hl * 4;
 
     // Get UDP header
-    struct udphdr *udp_header = (struct udphdr *)(packet + 14 + ip_header_len);
+    //struct udphdr *udp_header = (struct udphdr *)(packet + 14 + ip_header_len);
     int udp_header_len = sizeof(struct udphdr);
 
     // DNS packet starts after UDP header
-    const unsigned *dns_payload = packet + 14 + ip_header_len + udp_header_len;
+    const unsigned char *dns_payload = packet + 14 + ip_header_len + udp_header_len;
 
     // DNS header is 12 bytes
     unsigned short dns_flags = ntohs(*(unsigned short *)(dns_payload + 2));
@@ -33,7 +33,7 @@ void packet_handler(unsigned char *user_data, const struct pcap_pkthdr *pkthdr, 
     const char funcName [] = "packet_handler - ";
     printf("%s captured a packet with length of [%d]\n", funcName, pkthdr->len);
     // Additional processing on 'packet' can be done here
-    int res = parseDnsPacket(user_data, pkthdr, packet);
+    int res = parseDnsPacket(pkthdr, packet);
     if (1 == res)
     {
         printf("%s captured DNS RESPONSE\n", funcName);

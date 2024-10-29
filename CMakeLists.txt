@@ -10,10 +10,12 @@ message(STATUS "The root (top level) folder of the project is:${PROJECT_SOURCE_D
 # in this project
 add_compile_options(-Wall -Wextra -Wpedantic) #-Werror
 
-include_directories(src)
+include_directories(${PROJECT_SOURCE_DIR}/src)
 
-add_subdirectory(src/parser)
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/parser)
 
-add_subdirectory(src/utils)
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/utils)
 
-add_subdirectory(src)
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/tests)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/src)
