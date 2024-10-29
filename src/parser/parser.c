@@ -1,15 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "include/parser.h"
 
-#include <arpa/inet.h>
-
-#include <pcap.h>
-#include <netinet/ip.h>
-#include <netinet/udp.h>
-
-// Utilities:
-
-int parseDnsPacket(u_char *user, const struct pcap_pkthdr *pkthdr, const u_char *packet)
+int parseDnsPacket(unsigned char *user, const struct pcap_pkthdr *pkthdr, const unsigned char *packet)
 {
     // Get IP header
     struct ip *ip_header = (struct ip *)(packet + 14); // Skip Ethernet header (14 bytes)
@@ -20,7 +11,7 @@ int parseDnsPacket(u_char *user, const struct pcap_pkthdr *pkthdr, const u_char 
     int udp_header_len = sizeof(struct udphdr);
 
     // DNS packet starts after UDP header
-    const u_char *dns_payload = packet + 14 + ip_header_len + udp_header_len;
+    const unsigned *dns_payload = packet + 14 + ip_header_len + udp_header_len;
 
     // DNS header is 12 bytes
     unsigned short dns_flags = ntohs(*(unsigned short *)(dns_payload + 2));
@@ -37,7 +28,7 @@ int parseDnsPacket(u_char *user, const struct pcap_pkthdr *pkthdr, const u_char 
     }
 }
 
-void packet_handler(u_char *user_data, const struct pcap_pkthdr *pkthdr, const u_char *packet)
+void packet_handler(unsigned char *user_data, const struct pcap_pkthdr *pkthdr, const unsigned *packet)
 {
     const char funcName [] = "packet_handler - ";
     printf("%s captured a packet with length of [%d]\n", funcName, pkthdr->len);
@@ -100,17 +91,5 @@ int sampleFuncUsingLibpcap()
     // Close the handle
     pcap_close(handle);
 
-    return 0;
-}
-
-int main(int argc, char** argv)
-{
-    const char funcName [] = "main - ";
-    printf("%s START\n", funcName);
-
-    int ret = sampleFuncUsingLibpcap();
-    printf("%s the sample function returned:%d\n", funcName, ret);
-    
-    printf("%s END\n", funcName);
     return 0;
 }

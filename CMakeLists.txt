@@ -1,15 +1,19 @@
-cmake_minimum_required(VERSION 3.0)
+# This is the project's main CMakeLists.txt
+#========================================== 
+cmake_minimum_required(VERSION 3.16)
 project(dnsSniffer)
 
-# Find the libpcap library
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(PCAP REQUIRED libpcap)
+message(STATUS "main CMakeLists.txt of ${CMAKE_PROJECT_NAME}")
+message(STATUS "The root (top level) folder of the project is:${PROJECT_SOURCE_DIR}")
 
-# Define the executable target
-add_executable(dnsSniffer.out main.c)
+# Add the following compilation settings (flags) globally to ALL targets
+# in this project
+add_compile_options(-Wall -Wextra -Wpedantic) #-Werror
 
-# Link the libpcap library to the target
-target_link_libraries(dnsSniffer.out PRIVATE ${PCAP_LIBRARIES})
+include_directories(src)
 
-# Include the libpcap headers
-target_include_directories(dnsSniffer.out PRIVATE ${PCAP_INCLUDE_DIRS})
+add_subdirectory(src/parser)
+
+add_subdirectory(src/utils)
+
+add_subdirectory(src)
