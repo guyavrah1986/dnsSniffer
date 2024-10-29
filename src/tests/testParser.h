@@ -1,9 +1,9 @@
 #pragma once
 
-//extern "C"
-//{
-//    #include "../parser/include/parser.h"
-//}
+extern "C"
+{
+    #include "../parser/include/parser.h"
+}
 
 TEST(ParserTests, parseSingleDnsResponse)
 { 
@@ -20,8 +20,7 @@ TEST(ParserTests, parseSingleDnsResponse)
     0x00
 	};
 
-	int res = 0;
-	//res = parseDnsPacket(NULL, dnsResponsePacket);
-
-	EXPECT_EQ(res, 0);
+	int expectedRes = 1;
+	int res = parseDnsPacket(NULL, dnsResponsePacket);
+	EXPECT_EQ(res, expectedRes);
 }

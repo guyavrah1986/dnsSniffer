@@ -2,6 +2,7 @@
 
 int parseDnsPacket(const struct pcap_pkthdr *pkthdr, const unsigned char *packet)
 {
+    const char funcName [] = "parseDnsPacket - ";
     // Get IP header
     struct ip *ip_header = (struct ip *)(packet + 14); // Skip Ethernet header (14 bytes)
     int ip_header_len = ip_header->ip_hl * 4;
@@ -18,12 +19,12 @@ int parseDnsPacket(const struct pcap_pkthdr *pkthdr, const unsigned char *packet
 
     if ((dns_flags & 0x8000) == 0)
     {
-        printf("Captured a DNS query packet\n");
+        printf("%s captured a DNS query packet\n", funcName);
         return 0;
     }
     else
     {
-        printf("Captured a DNS response packet\n");
+        printf("%s captured a DNS response packet\n", funcName);
         return 1;
     }
 }
