@@ -3,7 +3,8 @@
 
 // Local include files for the different objects we wish to test
 // Each header file listed here contains GTest unit tests for some objects
-#include "tests/testParser.h"
+//#include "tests/testParser.h"
+#include "tests/testUtils.h"
 
 using namespace std;
 
