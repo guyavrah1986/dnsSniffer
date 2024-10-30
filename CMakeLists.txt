@@ -8,7 +8,7 @@ message(STATUS "The root (top level) folder of the project is:${PROJECT_SOURCE_D
 
 # Add the following compilation settings (flags) globally to ALL targets
 # in this project
-add_compile_options(-Wall -Wextra -Wpedantic) #-Werror
+add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
 

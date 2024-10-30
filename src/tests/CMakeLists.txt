@@ -15,6 +15,8 @@ message(STATUS "GTEST_LIBRARIES is: ${GTEST_LIBRARIES}")
 set(testsExeName "unitTestsExe.out")
 add_executable(${testsExeName} unitTestsMain.cpp)
 
+add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+
 # Due to the fact that the tcmalloc is installed into a "non standra" location
 # adding here an "extra" location for the linker to look for libraries. Note
 # that under these additional path(s) the linker ONLY looks for libraries 

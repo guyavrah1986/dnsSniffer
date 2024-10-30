@@ -4,6 +4,8 @@ set(libName "parserLib")
 
 add_library(${libName} SHARED parser.c)
 
+add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+
 # Find the libpcap library
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(PCAP REQUIRED libpcap)

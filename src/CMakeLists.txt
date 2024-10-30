@@ -5,7 +5,7 @@ message(STATUS "CMakeLists.txt of ${exeName} executable")
 
 # Add the following compilation settings (flags) globally to ALL targets
 # in this project
-add_compile_options(-Wall -Wextra -Wpedantic) #  -Werror
+add_compile_options(-Wall -Wextra -Wpedantic  -Werror)
 
 include_directories(src)
 
