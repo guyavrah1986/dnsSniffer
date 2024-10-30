@@ -1,11 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
-
-#include <arpa/inet.h>
-
-#include <pcap.h>
-#include <netinet/ip.h>
-#include <netinet/udp.h>
 
 #include "parser/include/parser.h"
 #include "utils/include/utils.h"

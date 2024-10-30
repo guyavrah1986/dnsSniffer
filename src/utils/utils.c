@@ -28,7 +28,7 @@ void getCmdLineArgs(int argc, char** argv)
     {
         // Print all arguments, including the program name
         printf("Arguments:\n");
-        for (int i = 0; i < argc; i++)
+        for (int i = 0; i < argc; ++i)
         {
             printf("%s argv[%d]: %s\n", funcName, i, argv[i]);
         }

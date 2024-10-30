@@ -1,5 +1,8 @@
 #include "include/parser.h"
 
+#include <netinet/ip.h>
+#include <netinet/udp.h>
+
 int parseDnsPacket(const unsigned char *packet)
 {
     // =============================================================================
