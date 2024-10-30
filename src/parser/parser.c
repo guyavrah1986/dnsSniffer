@@ -76,9 +76,13 @@ void packet_handler(unsigned char *user_data, const struct pcap_pkthdr *pkthdr, 
     {
         printf("%s captured DNS RESPONSE\n", funcName);
     }
-    else
+    else if (0 == res)
     {
         printf("%s captured DNS QUERY\n", funcName);
+    }
+    else
+    {
+        printf("%s parseDnsPacket was unsuccessfull\n", funcName);
     }
 }
 
