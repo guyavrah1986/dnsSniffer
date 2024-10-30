@@ -148,10 +148,12 @@ int sampleFuncUsingLibpcap()
 
     // Capture packets in an infinite loop (can set to specific number if desired)
     int numPacketsToCapture = 2;
+    printf("%s about to sniff %d packets and then terminate\n", funcName, numPacketsToCapture);
     pcap_loop(handle, numPacketsToCapture, packet_handler, NULL);
 
-    // Close the handle
+    // Cleanup
+    pcap_freealldevs(all_devices);
+    pcap_freecode(&fp);
     pcap_close(handle);
-
     return 0;
 }
