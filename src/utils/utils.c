@@ -2,6 +2,19 @@
 
 #include "include/utils.h"
 
+void printBytes(const unsigned char* byteArr, const unsigned short numBytesToDisplay)
+{
+    const char funcName [] = "printBytes - ";
+    printf("%s about to display %u bytes that starts at address:%p\n", funcName, numBytesToDisplay, (void*)byteArr);
+    for (unsigned short i = 0; i < numBytesToDisplay; ++i)
+    {
+        // Print each byte in hexadecimal format (2-digit uppercase hex)
+        printf("%02X ", byteArr[i]);
+    }
+
+    printf("\n");
+}
+
 void getCmdLineArgs(int argc, char** argv)
 {
     const char funcName [] = "getCmdLineArgs - ";
