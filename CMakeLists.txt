@@ -6,8 +6,6 @@ project(dnsSniffer)
 message(STATUS "main CMakeLists.txt of ${CMAKE_PROJECT_NAME}")
 message(STATUS "The root (top level) folder of the project is:${PROJECT_SOURCE_DIR}")
 
-# Add the following compilation settings (flags) globally to ALL targets
-# in this project
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)

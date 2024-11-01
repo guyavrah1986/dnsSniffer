@@ -9,8 +9,8 @@ int main(int argc, char** argv)
     printf("%s START\n", funcName);
     getCmdLineArgs(argc, argv);
 
-    int ret = sampleFuncUsingLibpcap();
-    printf("%s the sample function returned:%d\n", funcName, ret);
+    //int ret = sampleFuncUsingLibpcap();
+    //printf("%s the sample function returned:%d\n", funcName, ret);
     
     printf("%s END\n", funcName);
     return 0;
