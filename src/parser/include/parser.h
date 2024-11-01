@@ -1,7 +1,5 @@
 #pragma once
 
-#include <pcap.h>
-
 #include "../../utils/include/utils.h"
 
 // ====================================
@@ -85,11 +83,3 @@ uint32_t extract32(const uint8_t* buffer, size_t offset);
 
 size_t parseDnsQuestion(IN const uint8_t* buffer, IN size_t offset, OUT DnsQuestion* dnsQuestion);
 size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourceRecord* dnsResourceRecord);
-
-
-// TODO: - remove it
-void parse_response(uint16_t id, uint8_t *res);
-int parseDnsResponse(const unsigned char *packet);
-int parseDnsPacket(const unsigned char *packet);
-void packet_handler(unsigned char *user_data, const struct pcap_pkthdr *pkthdr, const unsigned char *packet);
-int sampleFuncUsingLibpcap();

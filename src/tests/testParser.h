@@ -1,5 +1,7 @@
 #pragma once
 
+#include <arpa/inet.h>
+
 extern "C"
 {
     #include "../parser/include/parser.h"
