@@ -3,24 +3,25 @@
 #include <string.h>
 
 #include "include/parser.h"
+#include "../utils/include/utils.h"
 
 #define DNS_PTR_NAME    0xc0
 
 // Helper function to extract a 16-bit value from a buffer
-uint16_t extract16(const uint8_t* buffer, size_t offset)
+uint16_t extract16(IN const uint8_t* buffer, IN size_t offset)
 {
     return (buffer[offset] << 8) | buffer[offset + 1];
 }
 
 // Helper function to extract a 32-bit value from a buffer
-uint32_t extract32(const uint8_t* buffer, size_t offset)
+uint32_t extract32(IN const uint8_t* buffer, IN size_t offset)
 {
     return (buffer[offset] << 24) | (buffer[offset + 1] << 16) |
            (buffer[offset + 2] << 8) | buffer[offset + 3];
 }
 
 // Function to parse QName (domain name)
-size_t parseQName(const uint8_t* buffer, size_t offset, char* qname)
+size_t parseQName(IN const uint8_t* buffer, IN size_t offset, OUT char* qname)
 {
     size_t pos = offset;
     size_t name_index = 0;
@@ -42,15 +43,15 @@ size_t parseQName(const uint8_t* buffer, size_t offset, char* qname)
 }
 
 // Function to parse DNS question section
-size_t parseDNSQuestion(const uint8_t* buffer, size_t offset)
+size_t parseDnsQuestion(IN const uint8_t* buffer, IN size_t offset, OUT DnsQuestion* dnsQuestion)
 {
-    char qname[256];
-    offset = parseQName(buffer, offset, qname);
+    //char qname[256];
+    offset = parseQName(buffer, offset, dnsQuestion->question);
     
     uint16_t qtype = extract16(buffer, offset);
     uint16_t qclass = extract16(buffer, offset + 2);
 
-    printf("Question Name: %s\n", qname);
+    printf("Question Name: %s\n",  dnsQuestion->question);
     printf("Question Type: %u\n", qtype);
     printf("Question Class: %u\n", qclass);
 

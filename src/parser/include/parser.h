@@ -2,6 +2,8 @@
 
 #include <pcap.h>
 
+#include "../../utils/include/utils.h"
+
 // ====================================
 // TCP/IP protocols related definitions
 // ====================================
@@ -15,7 +17,7 @@
 #define DNS_HEADER_SIZE sizeof(DnsHeader)
 #define DNS_LABEL_MAX_LEN 64
 #define DNS_PTR_NAME      0xc0
-#define DNS_QNAME_MAX_LEN 255
+#define DNS_QNAME_MAX_LEN 256
 
 #pragma pack(push, 1)
 typedef struct DnsHeader
@@ -55,6 +57,9 @@ typedef struct DnsQuestion
 {
   uint16_t questionType;
   uint16_t questionClass;
+  // GuyA: Aside from the additional extra space for the NULL terminator for actual
+  // maximum string it is better to define it 256 so it will be divided by 32/64
+  char question[DNS_QNAME_MAX_LEN];
 } DnsQuestion;
 #pragma pack(pop)
 
@@ -74,6 +79,10 @@ typedef struct DnsResourceRecord
 // ===================
 uint16_t extract16(const uint8_t* buffer, size_t offset);
 uint32_t extract32(const uint8_t* buffer, size_t offset);
+
+size_t parseDnsQuestion(IN const uint8_t* buffer, IN size_t offset, OUT DnsQuestion* dnsQuestion);
+
+
 
 
 void parse_response(uint16_t id, uint8_t *res);

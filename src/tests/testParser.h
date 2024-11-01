@@ -35,6 +35,12 @@ TEST(ParserTests, sanityParseSingleDnsResponsePayload)
     EXPECT_EQ(expectedTransactionIdValDecimal, ntohs(dnsHeader->id));
     EXPECT_EQ(expectedNumOfQUestionsValDecimal, ntohs(dnsHeader->qdcount));
     EXPECT_EQ(expectedNumOfQAnswersValDecimal, ntohs(dnsHeader->ancount));
+
+    // Extract the DNS question
+    //const char expectedQuestionDomainName [] = "google.com";
+    //size_t ret = parseDns
+
+
 }
 
 /*
