@@ -24,7 +24,6 @@ int listenerPrepareToEnterRunLoop()
     pcap_if_t *first_device;
 
     printf("%s about to look for devices (interfaces) to listen on\n", funcName);
-
     // Find the default network device to capture on
     if (-1 == pcap_findalldevs(&all_devices, errbuf))
     {
@@ -45,16 +44,15 @@ int listenerPrepareToEnterRunLoop()
 
     // Print the name of the first device
     printf("%s the available device is:%s\n", funcName, first_device->name);
-
     // Open the device for capturing (promiscuous mode)
     handle = pcap_open_live(first_device->name, BUFSIZ, 1, 1000, errbuf);
-    if (handle == NULL)
+    if (NULL == handle)
     {
         printf("%s couldn't open device %s: %s\n", funcName, first_device->name, errbuf);
         return 2;
     }
 
-    if (pcap_compile(handle, &fp, filter_exp, 0, PCAP_NETMASK_UNKNOWN) == -1)
+    if (-1 == pcap_compile(handle, &fp, filter_exp, 0, PCAP_NETMASK_UNKNOWN))
     {
         printf("%s couldn't parse filter %s: %s\n", funcName, filter_exp, pcap_geterr(handle));
         return 3;

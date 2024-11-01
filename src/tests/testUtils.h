@@ -10,5 +10,5 @@ TEST(UtilsTests, sanityTest)
 	EXPECT_EQ(0, 0);
     int argc = 1;
     char** argv = NULL;
-    getCmdLineArgs(argc, argv);
+    utilsGetCmdLineArgs(argc, argv);
 }

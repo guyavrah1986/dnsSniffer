@@ -2,7 +2,7 @@
 
 #include "include/utils.h"
 
-void displayDNSName(const uint8_t* questionName)
+void utilsdisplayDnsName(IN const uint8_t* questionName)
 {
     uint8_t len = questionName[0];  // First byte is the length of the first label
     int pos = 1;
@@ -24,7 +24,7 @@ void displayDNSName(const uint8_t* questionName)
     printf("\n");
 }
 
-void printBytesAscii(const uint8_t* byteArr, const unsigned short numBytesToDisplay)
+void utilsPrintBytesAscii(IN const uint8_t* byteArr, IN const unsigned short numBytesToDisplay)
 {
     for (unsigned short i = 0; i < numBytesToDisplay; ++i)
     {
@@ -33,7 +33,7 @@ void printBytesAscii(const uint8_t* byteArr, const unsigned short numBytesToDisp
     }
 }
 
-void printBytes(const unsigned char* byteArr, const unsigned short numBytesToDisplay)
+void printBytes(IN const unsigned char* byteArr, IN const unsigned short numBytesToDisplay)
 {
     const char funcName [] = "printBytes - ";
     printf("%s about to display %u bytes that starts at address:%p\n", funcName, numBytesToDisplay, (void*)byteArr);
@@ -46,9 +46,9 @@ void printBytes(const unsigned char* byteArr, const unsigned short numBytesToDis
     printf("\n");
 }
 
-void getCmdLineArgs(int argc, char** argv)
+void utilsGetCmdLineArgs(IN int argc, IN char** argv)
 {
-    const char funcName [] = "getCmdLineArgs - ";
+    const char funcName [] = "utilsGetCmdLineArgs - ";
     printf("%s got %d arguments from command line\n", funcName, argc);
     if (argc == 1)
     {

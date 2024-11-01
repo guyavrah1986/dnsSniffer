@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 {
     const char funcName [] = "main - ";
     printf("%s ===START===\n", funcName);
-    getCmdLineArgs(argc, argv);
+    utilsGetCmdLineArgs(argc, argv);
 
     int ret = componentTestEnterRunLoopAndCaptureSinglePacket();
     printf("%s the componentTestEnterRunLoopAndCaptureSinglePacket function returned:%d\n", funcName, ret);

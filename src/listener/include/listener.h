@@ -1,6 +1,6 @@
 // ============================================================================
 // ============================================================================
-// listener.c: 
+// listener.h: 
 // This is the "module" (component) that is responsible to do all the work
 // needed in order to listen to the relevant packets on the relevant interface
 // of the system, be it wired Ethernet (802.3) or wireless WiFi (802.11x).
@@ -18,7 +18,6 @@ Return value:
 0 - if all the preparations went well and the code can enter the
 endless "capture loop".
 Non zero - otherwise.
-
 */
 int listenerPrepareToEnterRunLoop();
 

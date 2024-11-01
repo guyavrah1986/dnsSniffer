@@ -5,8 +5,6 @@
 #include "include/parser.h"
 #include "../utils/include/utils.h"
 
-#define DNS_PTR_NAME    0xc0
-
 // Helper function to extract a 16-bit value from a buffer
 uint16_t extract16(IN const uint8_t* buffer, IN size_t offset)
 {
@@ -25,11 +23,9 @@ size_t parseQName(IN const uint8_t* buffer, IN size_t offset, OUT char* qname)
 {
     size_t pos = offset;
     size_t name_index = 0;
-
     while (buffer[pos] != 0)
     {
         int label_len = buffer[pos++];
-        
         for (int i = 0; i < label_len; i++)
         {
             qname[name_index++] = buffer[pos++];
@@ -46,7 +42,6 @@ size_t parseQName(IN const uint8_t* buffer, IN size_t offset, OUT char* qname)
 size_t parseDnsQuestion(IN const uint8_t* buffer, IN size_t offset, OUT DnsQuestion* dnsQuestion)
 {
     offset = parseQName(buffer, offset, dnsQuestion->question);
-    
     uint16_t qtype = extract16(buffer, offset);
     uint16_t qclass = extract16(buffer, offset + 2);
 
@@ -87,7 +82,6 @@ size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourc
     printf("Answer Class: %u\n", dnsResourceRecord->recordClass);
     printf("Answer TTL: %u\n", dnsResourceRecord->ttl);
     printf("Answer RDLength: %u\n", dnsResourceRecord->rdlength);
-
     printf("Answer RData: ");
     for (int i = 0; i < dnsResourceRecord->rdlength; ++i)
     {
@@ -96,7 +90,6 @@ size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourc
 
     // GuyA: for now, assume address is a legitimate IPv4 address
     sprintf(dnsResourceRecord->resourceData, "%u.%u.%u.%u", buffer[offset], buffer[offset + 1], buffer[offset + 2], buffer[offset + 3]);
-
     printf("\n");
     return offset + dnsResourceRecord->rdlength; // Move past RData
 }
