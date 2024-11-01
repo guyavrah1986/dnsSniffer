@@ -58,7 +58,7 @@ size_t parseDnsQuestion(IN const uint8_t* buffer, IN size_t offset, OUT DnsQuest
 }
 
 // Function to parse DNS answer section
-size_t parseDNSAnswer(const uint8_t* buffer, size_t offset)
+size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourceRecord* dnsResourceRecord)
 {
     // NOTE: The assumption here is that the name field in the answer will be
     // of type DNS_PTR_NAME (0xc0) --> so it means that the next byte is the 
@@ -76,24 +76,27 @@ size_t parseDNSAnswer(const uint8_t* buffer, size_t offset)
     offset += 2;
     printf("offset from DNS packet begining now is:%lu\n", offset);
 
-    uint16_t type = extract16(buffer, offset);
-    uint16_t class = extract16(buffer, offset + 2);
-    uint32_t ttl = extract32(buffer, offset + 4);
-    uint16_t rdlength = extract16(buffer, offset + 8);
+    dnsResourceRecord->type = extract16(buffer, offset);
+    dnsResourceRecord->recordClass = extract16(buffer, offset + 2);
+    dnsResourceRecord->ttl = extract32(buffer, offset + 4);
+    dnsResourceRecord->rdlength = extract16(buffer, offset + 8);
     offset += 10; // Move past Type, Class, TTL, and RDLength
 
     //printf("Answer Name: %s\n", name);
-    printf("Answer Type: %u\n", type);
-    printf("Answer Class: %u\n", class);
-    printf("Answer TTL: %u\n", ttl);
-    printf("Answer RDLength: %u\n", rdlength);
+    printf("Answer Type: %u\n", dnsResourceRecord->type);
+    printf("Answer Class: %u\n", dnsResourceRecord->recordClass);
+    printf("Answer TTL: %u\n", dnsResourceRecord->ttl);
+    printf("Answer RDLength: %u\n", dnsResourceRecord->rdlength);
 
     printf("Answer RData: ");
-    for (int i = 0; i < rdlength; i++)
+    for (int i = 0; i < dnsResourceRecord->rdlength; ++i)
     {
         printf("%02x ", buffer[offset + i]);
     }
 
+    // GuyA: for now, assume address is a legitimate IPv4 address
+    sprintf(dnsResourceRecord->resourceData, "%u.%u.%u.%u", buffer[offset], buffer[offset + 1], buffer[offset + 2], buffer[offset + 3]);
+
     printf("\n");
-    return offset + rdlength; // Move past RData
+    return offset + dnsResourceRecord->rdlength; // Move past RData
 }

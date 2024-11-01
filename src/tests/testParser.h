@@ -21,7 +21,7 @@ TEST(ParserTests, sanityParseSingleDnsResponsePayload)
         // Query (16 bytes)
         0x06, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x03, 0x63, 0x6f,
         0x6d, 0x00, 0x00, 0x01, 0x00, 0x01, 
-        // Answer
+        // Answer (16 bytes)
         0xc0, 0x0c, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x1d,
         0x00, 0x04, 0x8e, 0xfa, 0x4b, 0x2e,
         // Additional records
@@ -49,7 +49,23 @@ TEST(ParserTests, sanityParseSingleDnsResponsePayload)
     EXPECT_STREQ(expectedQuestionDomainName, dnsQuestion.question);
 
     // Extract the DNS answer
-    
+    uint16_t expectedType = 0x01;
+    uint16_t expectedRecordClass = 0x01;
+    uint32_t expectedTtl = 29;
+    uint16_t expectedRdlength = 4;
+    const char expectedResourceData [] = "142.250.75.46";
+    size_t answerLength = 16;
+    size_t offset = ret;
+    DnsResourceRecord dnsResourceRecord;
+    memset(&dnsResourceRecord, 0, sizeof(dnsResourceRecord));
+    ret = parseDnsAnswer(dnsPacket, offset, &dnsResourceRecord);
+    EXPECT_EQ(expectedType, dnsResourceRecord.type);
+    EXPECT_EQ(expectedRecordClass, dnsResourceRecord.recordClass);
+    EXPECT_EQ(expectedTtl, dnsResourceRecord.ttl);
+    EXPECT_EQ(expectedRdlength, dnsResourceRecord.rdlength);
+    EXPECT_EQ(offset + answerLength, ret);
+    printf("the resource data extracted from the answer is:%s\n", dnsResourceRecord.resourceData);
+    EXPECT_STREQ(expectedResourceData, dnsResourceRecord.resourceData);
 }
 
 /*

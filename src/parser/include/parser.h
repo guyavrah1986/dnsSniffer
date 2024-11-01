@@ -71,6 +71,9 @@ typedef struct DnsResourceRecord
   uint16_t  recordClass;
   int32_t   ttl;
   uint16_t  rdlength;
+  // GuyA: This is a point of trade-off between space Vs. run-time, i.e. - from space perspective, it would
+  // have been better to define it as a char* and allocate it in run-time according to the actual length.
+  char resourceData [DNS_QNAME_MAX_LEN];
 } DnsResourceRecord;
 #pragma pack(pop)
 
@@ -81,10 +84,10 @@ uint16_t extract16(const uint8_t* buffer, size_t offset);
 uint32_t extract32(const uint8_t* buffer, size_t offset);
 
 size_t parseDnsQuestion(IN const uint8_t* buffer, IN size_t offset, OUT DnsQuestion* dnsQuestion);
+size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourceRecord* dnsResourceRecord);
 
 
-
-
+// TODO: - remove it
 void parse_response(uint16_t id, uint8_t *res);
 int parseDnsResponse(const unsigned char *packet);
 int parseDnsPacket(const unsigned char *packet);
