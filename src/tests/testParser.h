@@ -9,14 +9,16 @@ TEST(ParserTests, sanityParseSingleDnsResponsePayload)
 {
     uint8_t dnsPacket [] =
     {
-        // DNS:
+        // DNS payload:
+
+        // Header (12 bytes)
         0x23, 0x1f, // Transaction ID
         0x81, 0x80, // Flags
         0x00, 0x01, // Questions count
         0x00, 0x01, // Answers count
         0x00, 0x00, // Authority records count (NS)
         0x00, 0x01, // Additional records count
-        // Query
+        // Query (16 bytes)
         0x06, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x03, 0x63, 0x6f,
         0x6d, 0x00, 0x00, 0x01, 0x00, 0x01, 
         // Answer
@@ -37,10 +39,17 @@ TEST(ParserTests, sanityParseSingleDnsResponsePayload)
     EXPECT_EQ(expectedNumOfQAnswersValDecimal, ntohs(dnsHeader->ancount));
 
     // Extract the DNS question
-    //const char expectedQuestionDomainName [] = "google.com";
-    //size_t ret = parseDns
+    size_t offsetFromStartOfDnsPayload = DNS_HEADER_SIZE;
+    size_t questionLength = 16; 
+    const char expectedQuestionDomainName [] = "google.com";
+    DnsQuestion dnsQuestion;
+    memset(&dnsQuestion, 0, sizeof(DnsQuestion));
+    size_t ret = parseDnsQuestion(dnsPacket, offsetFromStartOfDnsPayload, &dnsQuestion);
+    EXPECT_EQ(offsetFromStartOfDnsPayload + questionLength, ret);
+    EXPECT_STREQ(expectedQuestionDomainName, dnsQuestion.question);
 
-
+    // Extract the DNS answer
+    
 }
 
 /*

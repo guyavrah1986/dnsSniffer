@@ -6,6 +6,12 @@ project(dnsSniffer)
 message(STATUS "main CMakeLists.txt of ${CMAKE_PROJECT_NAME}")
 message(STATUS "The root (top level) folder of the project is:${PROJECT_SOURCE_DIR}")
 
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
+
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)

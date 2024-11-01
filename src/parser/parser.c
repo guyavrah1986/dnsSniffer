@@ -45,7 +45,6 @@ size_t parseQName(IN const uint8_t* buffer, IN size_t offset, OUT char* qname)
 // Function to parse DNS question section
 size_t parseDnsQuestion(IN const uint8_t* buffer, IN size_t offset, OUT DnsQuestion* dnsQuestion)
 {
-    //char qname[256];
     offset = parseQName(buffer, offset, dnsQuestion->question);
     
     uint16_t qtype = extract16(buffer, offset);
