@@ -2,7 +2,7 @@
 
 #include "include/utils.h"
 
-uint32_t hash(IN char* str)
+uint32_t utilsHash(IN const char* str)
 {
     uint32_t hash = 5381;
     int c;
