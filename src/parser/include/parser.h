@@ -88,9 +88,11 @@ typedef struct DnsResourceRecord
 // ===================
 uint16_t extract16(const uint8_t* buffer, size_t offset);
 uint32_t extract32(const uint8_t* buffer, size_t offset);
+//size_t calculateOffsetToDnsPayload();
 
 // =================
 // Module public API
 // =================
 size_t parseDnsQuestion(IN const uint8_t* buffer, IN size_t offset, OUT DnsQuestion* dnsQuestion);
 size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourceRecord* dnsResourceRecord);
+int parseDnsResponse(IN const uint8_t* packet);

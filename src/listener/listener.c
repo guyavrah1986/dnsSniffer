@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <pcap.h>
 
 #include "include/listener.h"
@@ -91,7 +93,7 @@ void packet_handler(IN unsigned char* userData, IN const struct pcap_pkthdr* pkt
     const char funcName [] = "packet_handler - ";
     if (NULL == userData)
     {
-        printf("%s userData is NULL\n", funcName);
+        printf("%s userData is NULL (but it is not indeed an issue)\n", funcName);
     }
 
     if (NULL == pkthdr)
@@ -109,7 +111,7 @@ void packet_handler(IN unsigned char* userData, IN const struct pcap_pkthdr* pkt
     // Calculate the offset from the begining of the captured frame all the 
     // way to the DNS payload
     // GuyA: TODO - check also IPv6 and/or IPv4 with options section!!!
-    size_t dnsPlaloadOffset = ETHERNET_HEADER_SIZE + IPv4_HEADER_SIZE + UDP_HEADER_SIZE;
-    printf("%s the offset from the start of the frame that needs to be added is:%lu\n", funcName, dnsPlaloadOffset);
-    //size_t offsetAfterParsingDnsQuestion = parseDnsQuestion((const uint8_t*) packet, offset, OUT DnsQuestion* dnsQuestion);
+    //printf("%s the offset from the start of the frame that needs to be added is:%lu\n", funcName, dnsPlaloadOffset);
+    int ret = parseDnsResponse(packet);
+    printf("%s parseDnsResponse returned:%d\n", funcName, ret);
 }

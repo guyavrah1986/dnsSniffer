@@ -16,11 +16,11 @@ add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
 
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/utils)
+
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/parser)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/listener)
-
-add_subdirectory(${PROJECT_SOURCE_DIR}/src/utils)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/tests)
 

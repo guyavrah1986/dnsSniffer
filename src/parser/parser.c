@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <arpa/inet.h>
+
 #include "include/parser.h"
 #include "../utils/include/utils.h"
 
@@ -16,6 +18,33 @@ uint32_t extract32(IN const uint8_t* buffer, IN size_t offset)
 {
     return (buffer[offset] << 24) | (buffer[offset + 1] << 16) |
            (buffer[offset + 2] << 8) | buffer[offset + 3];
+}
+
+static size_t calculateOffsetToDnsPayload()
+{
+    const char funcNmae [] = "parser::calculateOffsetToDnsPayload - ";
+    size_t offsetToDnsPayload = 0;
+
+    // GuyA:According to some research done online, it appears that when a WiFi 
+    // packet (802.11x) is being handed from the driver to the rest of the
+    // network stack, it is being "considered" as a "fake" Ethernet (802.3) 
+    // frame. This make sense, becuase WiFi was developed to be the "wireless
+    // Ethernet" --> so in any case, assume the Link layer header is an 
+    // Ethernet frame --> its length is 14 bytes
+    offsetToDnsPayload += ETHERNET_HEADER_SIZE;
+
+    // GuyA: In the case of DNS packets that:
+    // 1. Encapsulated within IPv6
+    // 2. Encapsulated within IPv4 and the options section is present
+    // --> the offset needs to be adjusted!
+    offsetToDnsPayload += IPv4_HEADER_SIZE;
+
+    // GuyA: The assumption (which is also applied in the libpcap filter) is
+    // that only DNS packets on top of UDP are desired.
+    offsetToDnsPayload += UDP_HEADER_SIZE;
+
+    printf("%s returning offset:%lu\n", funcNmae, offsetToDnsPayload);
+    return offsetToDnsPayload;
 }
 
 // Function to parse QName (domain name)
@@ -92,4 +121,75 @@ size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourc
     sprintf(dnsResourceRecord->resourceData, "%u.%u.%u.%u", buffer[offset], buffer[offset + 1], buffer[offset + 2], buffer[offset + 3]);
     printf("\n");
     return offset + dnsResourceRecord->rdlength; // Move past RData
+}
+
+int parseDnsResponse(IN const uint8_t* packet)
+{
+    const char funcName [] = "parseDnsResponse - ";
+
+    size_t dnsPlaloadOffset = calculateOffsetToDnsPayload();
+    printf("%s DNS payload is in offset of:%lu from the begining of the frame\n", funcName, dnsPlaloadOffset);
+    packet = packet + dnsPlaloadOffset;
+
+    // 1. Parse the DNS header section
+    DnsQuestion dnsQuestion;
+    memset(&dnsQuestion, 0, sizeof(dnsQuestion));
+    DnsHeader* dnsHeader = (DnsHeader*)packet;
+    uint16_t numOfQuestions = ntohs(dnsHeader->qdcount);
+    printf("%s number of questions:%u\n", funcName, numOfQuestions);
+
+    // 2. Parse questions
+    // packet += DNS_HEADER_SIZE;
+    return 0;
+
+
+
+
+    /*
+    size_t offsetAfterParsingDnsQuestion = parseDnsQuestion((const uint8_t*) packet, dnsPlaloadOffset, &dnsQuestion);
+    printf("%s offset returned is now:%lu from the begining of the entire frame\n", funcName, offsetAfterParsingDnsQuestion);
+    const unsigned char *answer_section = dns_payload + sizeof(struct dns_header);
+    printf("%s the DNS answer section part of the packet starts at address:%p and has the value:%02X\n", funcName, (void*)answer_section, *answer_section);
+    return -1;
+
+    // GuyA: This is where endianess can be tricky, and worth checking before
+    // deployment
+    int question_count = ntohs(dns->qdcount);
+
+    // Skip over the question section
+    for (int i = 0; i < question_count; i++) {
+        // Skip over question name (variable length, terminated by 0 byte)
+        while (*answer_section != 0) {
+            answer_section++;
+        }
+        answer_section += 5; // Skip null byte and QTYPE, QCLASS (4 bytes)
+    }
+
+    // Process the answer section
+    int answer_count = ntohs(dns->ancount);
+    for (int i = 0; i < answer_count; i++) {
+        // Skip over answer name (variable length, terminated by 0 byte)
+        while (*answer_section != 0) {
+            answer_section++;
+        }
+        answer_section++; // Skip null byte
+
+        // Cast the remaining part of the answer to dns_rr struct
+        struct dns_rr *rr = (struct dns_rr *)answer_section;
+        uint16_t type = ntohs(rr->type);
+
+        // Print record type
+        printf("Record %d Type: %d ", i + 1, type);
+        switch (type) {
+            case 1: printf("(A)\n"); break;
+            case 28: printf("(AAAA)\n"); break;
+            case 5: printf("(CNAME)\n"); break;
+            default: printf("(Unknown)\n"); break;
+        }
+
+        // Move to the next record (rdlength + 10 bytes for the DNS RR header)
+        answer_section += 10 + ntohs(rr->rdlength);
+    }
+    */
+
 }

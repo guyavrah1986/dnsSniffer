@@ -17,4 +17,6 @@ pkg_check_modules(PCAP REQUIRED libpcap)
 # Link the libpcap library to the target
 target_link_libraries(${libName} PRIVATE ${PCAP_LIBRARIES})
 
+target_link_libraries(${libName} PUBLIC parserLib)
+
 message(STATUS "CMakeLists.txt of ${libName} - created library")
