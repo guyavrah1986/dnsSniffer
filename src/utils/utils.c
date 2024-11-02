@@ -2,6 +2,18 @@
 
 #include "include/utils.h"
 
+uint32_t hash(IN char* str)
+{
+    uint32_t hash = 5381;
+    int c;
+    while ((c = *str++))
+    {
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    }
+        
+    return hash;
+}
+
 void utilsdisplayDnsName(IN const uint8_t* questionName)
 {
     uint8_t len = questionName[0];  // First byte is the length of the first label
