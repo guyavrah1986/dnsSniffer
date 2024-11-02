@@ -98,7 +98,7 @@ size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourc
     // char name[256];
     //offset = parseQName(buffer, offset, name); // Handle name (could use compression)
     offset += 2;
-    printf("offset from DNS packet begining now is:%lu\n", offset);
+    printf("offset is now:%lu\n", offset);
 
     dnsResourceRecord->type = extract16(buffer, offset);
     dnsResourceRecord->recordClass = extract16(buffer, offset + 2);
@@ -120,16 +120,14 @@ size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourc
     // GuyA: for now, assume address is a legitimate IPv4 address
     sprintf(dnsResourceRecord->resourceData, "%u.%u.%u.%u", buffer[offset], buffer[offset + 1], buffer[offset + 2], buffer[offset + 3]);
     printf("\n");
+    printf("Answer as string:%s\n", dnsResourceRecord->resourceData);
     return offset + dnsResourceRecord->rdlength; // Move past RData
 }
 
 int parseDnsResponse(IN const uint8_t* packet)
 {
     const char funcName [] = "parseDnsResponse - ";
-
-    size_t dnsPlaloadOffset = calculateOffsetToDnsPayload();
-    printf("%s DNS payload is in offset of:%lu from the begining of the frame\n", funcName, dnsPlaloadOffset);
-    packet = packet + dnsPlaloadOffset;
+    packet = packet + calculateOffsetToDnsPayload();
 
     // 1. Parse the DNS header section
     DnsHeader* dnsHeader = (DnsHeader*)packet;
@@ -146,10 +144,25 @@ int parseDnsResponse(IN const uint8_t* packet)
         printf("%s able to handle a DNS response with ONLY one question, but there are %u, discarding the packet\n", funcName, numOfQuestions);
         return -1;
     }
+
     DnsQuestion dnsQuestion;
     memset(&dnsQuestion, 0, sizeof(dnsQuestion));
     packet += DNS_HEADER_SIZE;
-    dnsPlaloadOffset = parseDnsQuestion(packet, 0, &dnsQuestion);
+    size_t offsetToAdd = parseDnsQuestion(packet, 0, &dnsQuestion);
+    packet += offsetToAdd; // Forward buffer to the answers section
+
+    // 3. Parse answers
+    // In this case, we support one or more answers 
+    offsetToAdd = 0;
+    for (uint8_t i = 0; i < numOfAnswers; ++i)
+    {
+        DnsResourceRecord dnsResourceRecord;
+        memset(&dnsResourceRecord, 0, sizeof(dnsResourceRecord));
+        offsetToAdd = parseDnsAnswer(packet, 0, &dnsResourceRecord);
+        packet += offsetToAdd;
+    }
+
+
     return 0;
 
 
