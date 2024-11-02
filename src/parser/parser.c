@@ -8,13 +8,13 @@
 #include "../utils/include/utils.h"
 
 // Helper function to extract a 16-bit value from a buffer
-uint16_t extract16(IN const uint8_t* buffer, IN size_t offset)
+static uint16_t extract16(IN const uint8_t* buffer, IN size_t offset)
 {
     return (buffer[offset] << 8) | buffer[offset + 1];
 }
 
 // Helper function to extract a 32-bit value from a buffer
-uint32_t extract32(IN const uint8_t* buffer, IN size_t offset)
+static uint32_t extract32(IN const uint8_t* buffer, IN size_t offset)
 {
     return (buffer[offset] << 24) | (buffer[offset + 1] << 16) |
            (buffer[offset + 2] << 8) | buffer[offset + 3];

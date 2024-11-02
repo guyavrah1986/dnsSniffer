@@ -84,13 +84,6 @@ typedef struct DnsResourceRecord
 } DnsResourceRecord;
 #pragma pack(pop)
 
-// ===================
-// Utilities functions
-// ===================
-uint16_t extract16(const uint8_t* buffer, size_t offset);
-uint32_t extract32(const uint8_t* buffer, size_t offset);
-//size_t calculateOffsetToDnsPayload();
-
 // =================
 // Module public API
 // =================
