@@ -1,6 +1,7 @@
 #include <pcap.h>
 
 #include "include/listener.h"
+#include "../parser/include/parser.h"
 
 // GuyA: This rule can be set instead in some configuration file and/or passed
 // to the program via command line argument. For now, set it hard-coded here.
@@ -85,12 +86,30 @@ int listenerCleanupAfterRunLoop()
     return 0;
 }
 
-void packet_handler(unsigned char* user_data, const struct pcap_pkthdr* pkthdr, const unsigned char* packet)
+void packet_handler(IN unsigned char* userData, IN const struct pcap_pkthdr* pkthdr, IN const unsigned char* packet)
 {
     const char funcName [] = "packet_handler - ";
-    if (NULL == user_data || NULL == pkthdr || NULL == packet)
+    if (NULL == userData)
     {
-        printf("%s one or more of the provided argument(s)  is NULL\n", funcName);
+        printf("%s userData is NULL\n", funcName);
+    }
+
+    if (NULL == pkthdr)
+    {
+        printf("%s pkthdr is NULL\n", funcName);
         return;
     }
+
+    if (NULL == packet)
+    {
+        printf("%s packet is NULL\n", funcName);
+        return;
+    }
+
+    // Calculate the offset from the begining of the captured frame all the 
+    // way to the DNS payload
+    // GuyA: TODO - check also IPv6 and/or IPv4 with options section!!!
+    size_t dnsPlaloadOffset = ETHERNET_HEADER_SIZE + IPv4_HEADER_SIZE + UDP_HEADER_SIZE;
+    printf("%s the offset from the start of the frame that needs to be added is:%lu\n", funcName, dnsPlaloadOffset);
+    //size_t offsetAfterParsingDnsQuestion = parseDnsQuestion((const uint8_t*) packet, offset, OUT DnsQuestion* dnsQuestion);
 }
