@@ -160,17 +160,7 @@ struct node* find_node(struct node* head, const char* value)
     return NULL;  // Node not found
 }
 
-// Function to free the entire linked list
-void free_list(struct node* head)
-{
-    struct node* current = head;
-    while (current != NULL) {
-        struct node* temp = current;
-        current = current->next;
-        free_node(temp);  // Free each node
-    }
-}
-
+/*
 void display_list(struct node* head)
 {
     struct node* current = head;
@@ -182,3 +172,16 @@ void display_list(struct node* head)
 
     printf("NULL\n");
 }
+
+
+// Function to free the entire linked list
+void free_list(struct node* head)
+{
+    struct node* current = head;
+    while (current != NULL) {
+        struct node* temp = current;
+        current = current->next;
+        free_node(temp);  // Free each node
+    }
+}
+*/

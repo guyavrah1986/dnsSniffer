@@ -51,7 +51,9 @@ void remove_node(struct node** head, const char* value);
 // Function to find a node in the list according to a char* value
 struct node* find_node(struct node* head, const char* value);
 
+//void display_list(struct node* head);
+
+/*
 // Function to free the entire linked list
 void free_list(struct node* head);
-
-void display_list(struct node* head);
+*/

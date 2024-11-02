@@ -36,7 +36,7 @@ TEST(DataBaseManagerTest, testCreateLinkedListWithTwoNodes)
     const char value2 [] = "142.251.142.206";
     insert_end(&head, value2);
 
-    display_list(head);
+    //display_list(head);
 }
 
 TEST(DataBaseManagerTest, testFindNodeInLinkedListWithTwoNodes)
@@ -51,7 +51,7 @@ TEST(DataBaseManagerTest, testFindNodeInLinkedListWithTwoNodes)
     const char value2 [] = "142.251.142.206";
     insert_end(&head, value2);
 
-    display_list(head);
+    //display_list(head);
     // Find first element
     struct node* ret = find_node(head, value1);
     EXPECT_NE(ret, nullptr);

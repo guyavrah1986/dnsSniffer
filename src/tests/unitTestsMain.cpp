@@ -6,6 +6,7 @@
 #include "tests/testParser.h"
 #include "tests/testUtils.h"
 #include "tests/testDataBaseManager.h"
+#include "tests/testHastTable.h"
 
 using namespace std;
 

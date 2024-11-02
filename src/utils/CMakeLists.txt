@@ -2,7 +2,7 @@
 # ==========================================
 set(libName "utilsLib")
 
-add_library(${libName} SHARED utils.c)
+add_library(${libName} SHARED utils.c hashTable.c)
 
 # For test covrage - enable it back
 #target_compile_options(${libName} PUBLIC -g -O0 -Wall -fprofile-arcs -ftest-coverage)
