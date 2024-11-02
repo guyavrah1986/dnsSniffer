@@ -24,6 +24,7 @@
 #define DNS_LABEL_MAX_LEN 64
 #define DNS_PTR_NAME      0xc0
 #define DNS_QNAME_MAX_LEN 256
+#define DNS_MAX_NUM_QUESTIONS_PER_RESPONSE 1
 
 #pragma pack(push, 1)
 typedef struct DnsHeader

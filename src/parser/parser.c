@@ -132,14 +132,24 @@ int parseDnsResponse(IN const uint8_t* packet)
     packet = packet + dnsPlaloadOffset;
 
     // 1. Parse the DNS header section
-    DnsQuestion dnsQuestion;
-    memset(&dnsQuestion, 0, sizeof(dnsQuestion));
     DnsHeader* dnsHeader = (DnsHeader*)packet;
     uint16_t numOfQuestions = ntohs(dnsHeader->qdcount);
+    uint16_t numOfAnswers = ntohs(dnsHeader->ancount);
     printf("%s number of questions:%u\n", funcName, numOfQuestions);
+    printf("%s number of answers:%u\n", funcName, numOfAnswers);
 
-    // 2. Parse questions
-    // packet += DNS_HEADER_SIZE;
+    // 2. Parse question
+    // GuyA:It is assumes that the DNS response has only a single question.
+    // If it has more, the function terminates without further processing.
+    if (DNS_MAX_NUM_QUESTIONS_PER_RESPONSE < numOfQuestions)
+    {
+        printf("%s able to handle a DNS response with ONLY one question, but there are %u, discarding the packet\n", funcName, numOfQuestions);
+        return -1;
+    }
+    DnsQuestion dnsQuestion;
+    memset(&dnsQuestion, 0, sizeof(dnsQuestion));
+    packet += DNS_HEADER_SIZE;
+    dnsPlaloadOffset = parseDnsQuestion(packet, 0, &dnsQuestion);
     return 0;
 
 
