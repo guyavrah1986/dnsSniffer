@@ -5,6 +5,7 @@
 // Each header file listed here contains GTest unit tests for some objects
 #include "tests/testParser.h"
 #include "tests/testUtils.h"
+#include "tests/testDataBaseManager.h"
 
 using namespace std;
 
