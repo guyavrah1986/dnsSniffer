@@ -82,7 +82,17 @@ TEST(DataBaseManagerTest, testCreationAndDestructionOfTheHashTable)
     const uint8_t addr [] = {0x8e, 0xfa, 0x4b, 0x2e};
     size_t offset = 0;
     sprintf(dnsRecordToAdd.resourceData, "%u.%u.%u.%u", addr[offset], addr[offset + 1], addr[offset + 2], addr[offset + 3]);
+    printf("dnsRecordToAdd.resourceData is:%s\n", dnsRecordToAdd.resourceData);
+    
+    // Verify insertion
     ret = dataBaseMgrInsertItem(key, &dnsRecordToAdd);
     EXPECT_EQ(0, ret);
+
+    // Check getter of the DB returns list of single item that was inserted 
+    // eariler to the DB
+    struct node* itemList = dataBaseMgrGetItem(key);
+    ASSERT_NE(itemList, nullptr);
+
+    // Clean DB
     dataBaseMgrClean();
 }

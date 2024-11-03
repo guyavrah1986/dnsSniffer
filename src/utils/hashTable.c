@@ -102,7 +102,7 @@ void insert(IN hash_table* table, IN const char* key, IN const char* value)
         entry = entry->next;
     }
 
-    // Key does not exist, create a new entry
+    printf("%s key:%s does not exist, create a new entry with value:%s\n", funcName, key, value);
     entry = malloc(sizeof(hash_entry));
     entry->key = strdup(key);
     entry->value = NULL;

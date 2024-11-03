@@ -35,6 +35,19 @@ int dataBaseMgrInsertItem(IN const char* key, IN const DnsResourceRecord* dnsRec
     return 0;
 }
 
+struct node* dataBaseMgrGetItem(IN const char* key)
+{
+    const char funcName [] = "dataBaseMgrGetItem - ";
+    if (NULL == key)
+    {
+        printf("%s got key which is NULL\n", funcName);
+        return NULL;
+    }
+
+    // struct node* list = find(table, "yahoo.com");
+    return NULL;
+}
+
 void dataBaseMgrClean()
 {
     const char funcName [] = "dataBaseMgrClean -";

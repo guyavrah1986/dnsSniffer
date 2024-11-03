@@ -24,4 +24,5 @@
 
 int dataBaseMgrInit();
 int dataBaseMgrInsertItem(IN const char* key, IN const DnsResourceRecord* dnsRecordToAdd);
+struct node* dataBaseMgrGetItem(IN const char* key);
 void dataBaseMgrClean();
