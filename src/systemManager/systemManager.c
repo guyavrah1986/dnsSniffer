@@ -4,6 +4,21 @@
 #include "include/systemManager.h"
 #include "../listener/include/listener.h"
 #include "../dataBaseManager/include/dataBaseManager.h"
+#include "../utils/include/hashTable.h"
+
+static void systemMgrDisplayUserDomainInfo(const char* domainNameToQuery)
+{
+    const char funcName [] = "systemMgrDisplayUserDomainInfo -";
+    struct node* listToDisplay = dataBaseMgrGetItem(domainNameToQuery);
+    if (NULL == listToDisplay)
+    {
+        printf("%s no addresses were captured for domain name:%s\n", funcName, domainNameToQuery);
+        return;
+    }
+
+    printf("%s domain name:%s has the following addresses\n", funcName, domainNameToQuery);
+    display_list(listToDisplay);
+}
 
 static void* systemMgrDisplayClientMenu(IN void* arg)
 {
@@ -38,6 +53,7 @@ static void* systemMgrDisplayClientMenu(IN void* arg)
 
         // Otherwise, print the domain name entered
         printf("You entered: %s\n", input);
+        systemMgrDisplayUserDomainInfo(input);
     }
 
     printf("%s done with client UI loop\n", funcName);
