@@ -5,18 +5,6 @@
 #include <arpa/inet.h>
 
 #include "include/parser.h"
-#include "../utils/include/utils.h"
-
-#define PARSER_IPv4_ADDR_LEN 4
-#define PARSER_IPv6_ADDR_LEN 16
-
-typedef enum RecordType
-{
-    PARSER_RECORD_TYPE_IPv4,
-    PARSER_RECORD_TYPE_IPv6,
-    PARSER_RECORD_TYPE_CNAME,
-    PARSER_RECORD_TYPE_UNSUPPORTED
-} RecordType;
 
 static void ipv6ToStr(IN const uint8_t* buffer, IN size_t startOffset, OUT char resourceData [])
 {
@@ -163,19 +151,18 @@ size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourc
         return 0;
     }
     
-    // char name[256];
-    //offset = parseQName(buffer, offset, name); // Handle name (could use compression)
+    // Move past the name field
     offset += 2;
     printf("%s offset is now:%lu\n", funcName, offset);
     dnsResourceRecord->type = extract16(buffer, offset);
     dnsResourceRecord->recordClass = extract16(buffer, offset + 2);
     dnsResourceRecord->ttl = extract32(buffer, offset + 4);
     dnsResourceRecord->rdlength = extract16(buffer, offset + 8);
+
     // Move past Type, Class, TTL, and RDLength
     offset += 10;
 
     // GuyA: For debug - needs to be removed
-    //printf("Answer Name: %s\n", name);
     printf("%s answer Type: %u\n", funcName, dnsResourceRecord->type);
     printf("%s answer Class: %u\n", funcName, dnsResourceRecord->recordClass);
     printf("%s answer TTL: %u\n", funcName, dnsResourceRecord->ttl);
@@ -189,7 +176,9 @@ size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourc
     printf("\n");
     size_t numOfBytesParsed = extractRecordAddress(buffer, getRecordType(dnsResourceRecord->type), offset, dnsResourceRecord->resourceData);
     printf("%s parsed %lu bytes, the answer as string:%s\n", funcName, numOfBytesParsed, dnsResourceRecord->resourceData);
-    return offset + numOfBytesParsed; // Move past RData
+
+    // Move past RData
+    return offset + numOfBytesParsed;
 }
 
 int parseDnsResponse(IN const uint8_t* packet)

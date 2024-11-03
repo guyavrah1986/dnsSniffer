@@ -67,9 +67,20 @@ TEST(DataBaseManagerTest, testCreationAndDestructionOfTheHashTable)
     int retVal = dataBaseMgrInit();
     EXPECT_EQ(0, retVal);
 
-    DnsResourceRecord* dnsRecordToAdd = NULL;
-    int ret= dataBaseMgrInsertItem(dnsRecordToAdd);
+    // Try invalid insertion
+    const char key [] = "google.com";
+    int ret= dataBaseMgrInsertItem(key, NULL);
     EXPECT_EQ(1, ret);
-    //ASSERT_NE(googleComHashVal, cnnComHashVal);
+
+    // Insert a concrete key,value to an empty DB (hash table)
+    DnsResourceRecord dnsRecordToAdd;
+    dnsRecordToAdd.name = 0x1;
+    dnsRecordToAdd.ttl = 140;
+    dnsRecordToAdd.type = 1;
+    dnsRecordToAdd.rdlength = PARSER_IPv4_ADDR_LEN;
+    dnsRecordToAdd.recordClass = 1;
+    const uint8_t addr [] = {0x8e, 0xfa, 0x4b, 0x2e};
+    size_t offset = 0;
+    sprintf(dnsRecordToAdd.resourceData, "%u.%u.%u.%u", addr[offset], addr[offset + 1], addr[offset + 2], addr[offset + 3]);
     dataBaseMgrClean();
 }

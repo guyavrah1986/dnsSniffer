@@ -23,5 +23,5 @@
 #include "../../parser/include/parser.h"
 
 int dataBaseMgrInit();
-int dataBaseMgrInsertItem(IN const DnsResourceRecord* dnsRecordToAdd);
+int dataBaseMgrInsertItem(IN const char* key, IN const DnsResourceRecord* dnsRecordToAdd);
 void dataBaseMgrClean();

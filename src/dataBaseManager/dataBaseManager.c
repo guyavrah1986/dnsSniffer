@@ -6,13 +6,13 @@
 // This is the global (per translation unit) hash table.
 // There should be only one such table throught the entire lifetime of 
 // the program.
-static hash_table* table;
+static hash_table* g_table;
 
 int dataBaseMgrInit()
 {
     const char funcName [] = "dataBaseMgrInit -";
-    table = create_table();
-    if (NULL != table)
+    g_table = create_table();
+    if (NULL != g_table)
     {
         printf("%s created hash table successfully\n", funcName);
         return 0;
@@ -22,21 +22,22 @@ int dataBaseMgrInit()
     return 1;
 }
 
-int dataBaseMgrInsertItem(IN const DnsResourceRecord* dnsRecordToAdd)
+int dataBaseMgrInsertItem(IN const char* key, IN const DnsResourceRecord* dnsRecordToAdd)
 {
     const char funcName [] = "dataBaseMgrInsertItem - ";
-    if (NULL == dnsRecordToAdd)
+    if (NULL == key || NULL == dnsRecordToAdd)
     {
-        printf("%s dnsRecordToAdd is NULL\n", funcName);
+        printf("%s dnsRecordToAdd and/or key is NULL\n", funcName);
         return 1;
     }
 
-    return 1;
+    insert(g_table, key, dnsRecordToAdd->resourceData);
+    return 0;
 }
 
 void dataBaseMgrClean()
 {
     const char funcName [] = "dataBaseMgrClean -";
-    free_table(table);
+    free_table(g_table);
     printf("%s hash table was free-ed successfully\n", funcName);
 }

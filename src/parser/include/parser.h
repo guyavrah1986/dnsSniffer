@@ -10,6 +10,12 @@
 
 #include "../../utils/include/utils.h"
 
+// ==========================
+// Parser related definitions
+// ==========================
+#define PARSER_IPv4_ADDR_LEN 4
+#define PARSER_IPv6_ADDR_LEN 16
+
 // ====================================
 // TCP/IP protocols related definitions
 // ====================================
@@ -85,6 +91,14 @@ typedef struct DnsResourceRecord
   char resourceData [DNS_QNAME_MAX_LEN];
 } DnsResourceRecord;
 #pragma pack(pop)
+
+typedef enum RecordType
+{
+    PARSER_RECORD_TYPE_IPv4,
+    PARSER_RECORD_TYPE_IPv6,
+    PARSER_RECORD_TYPE_CNAME,
+    PARSER_RECORD_TYPE_UNSUPPORTED
+} RecordType;
 
 // =================
 // Module public API
