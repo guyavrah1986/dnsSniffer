@@ -25,6 +25,7 @@ int listenerPrepareToEnterRunLoop()
     pcap_if_t *first_device;
 
     printf("%s about to look for devices (interfaces) to listen on\n", funcName);
+
     // Find the default network device to capture on
     if (-1 == pcap_findalldevs(&all_devices, errbuf))
     {
@@ -45,6 +46,7 @@ int listenerPrepareToEnterRunLoop()
 
     // Print the name of the first device
     printf("%s the available device is:%s\n", funcName, first_device->name);
+
     // Open the device for capturing (promiscuous mode)
     handle = pcap_open_live(first_device->name, BUFSIZ, 1, 1000, errbuf);
     if (NULL == handle)
@@ -73,6 +75,7 @@ void listenerRunLoop()
 {
     const char funcName [] = "listenerRunLoop - ";
     printf("%s about to start and sniff DNS packets\n", funcName);
+    // GuyA: TODO - change the 2 to be infinte
     pcap_loop(handle, 2, packet_handler, NULL);
 }
 
@@ -102,14 +105,13 @@ void packet_handler(IN unsigned char* userData, IN const struct pcap_pkthdr* pkt
 
     if (NULL == packet)
     {
-        printf("%s packet is NULL\n", funcName);
+        printf("%s packet is NULL, aborting processing of this packet\n", funcName);
         return;
     }
 
     // Calculate the offset from the begining of the captured frame all the 
     // way to the DNS payload
     // GuyA: TODO - check also IPv6 and/or IPv4 with options section!!!
-    //printf("%s the offset from the start of the frame that needs to be added is:%lu\n", funcName, dnsPlaloadOffset);
     int ret = parseDnsResponse(packet);
     printf("%s parseDnsResponse returned:%d\n", funcName, ret);
 }
