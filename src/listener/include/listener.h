@@ -13,22 +13,27 @@
 
 #include "../../utils/include/utils.h"
 
+// Global variables to share with other source files
+// Shared flag to control the loop
+volatile int keepRunning;
+pcap_t* handle;
+
 /*
 This function is performing all the requiered settings and initialization
 in order to start to listen on the main ("default") interface of the machine.
 Return value:
-0 - if all the preparations went well and the code can enter the
+the pcap_t handle - if all the preparations went well and the code can enter the
 endless "capture loop".
-Non zero - otherwise.
+NULL - otherwise.
 */
-int listenerPrepareToEnterRunLoop();
+pcap_t* listenerPrepareToEnterRunLoop();
 
 /*
 This is the "main" endless capture loop. Once the code enters this function, it
 starts to capture the desired packets (according to some filtering rules) from
 the relevant interface.
 */
-void listenerRunLoop();
+void* listenerRunLoop(IN void* arg);
 
 /*
 This function is responsible to perform all the relevant clean-up procedure

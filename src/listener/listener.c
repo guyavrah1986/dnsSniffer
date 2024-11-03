@@ -14,11 +14,10 @@
 static const char filter_exp[] = "(udp port 53) && (udp[10] & 0x80 != 0) && (udp[11] & 0x0F == 0)";
 
 // Global variables of this module:
-static pcap_t *handle;
 static pcap_if_t *all_devices;
 static struct bpf_program fp;
 
-int listenerPrepareToEnterRunLoop()
+pcap_t* listenerPrepareToEnterRunLoop()
 {
     const char funcName [] = "listenerPrepareToEnterRunLoop - ";
     char errbuf[PCAP_ERRBUF_SIZE];
@@ -30,14 +29,14 @@ int listenerPrepareToEnterRunLoop()
     if (-1 == pcap_findalldevs(&all_devices, errbuf))
     {
         printf("%s couldn't find default device:%s\n", funcName, errbuf);
-        return 1;
+        return NULL;
     }
 
     // Check if we have at least one device
     if (NULL == all_devices)
     {
         printf("%s no devices found\n", funcName);
-        return 1;
+        return NULL;
     }
 
     // Get the first device in the list, this is to be assumed the main
@@ -52,31 +51,38 @@ int listenerPrepareToEnterRunLoop()
     if (NULL == handle)
     {
         printf("%s couldn't open device %s: %s\n", funcName, first_device->name, errbuf);
-        return 2;
+        return NULL;
     }
 
     if (-1 == pcap_compile(handle, &fp, filter_exp, 0, PCAP_NETMASK_UNKNOWN))
     {
         printf("%s couldn't parse filter %s: %s\n", funcName, filter_exp, pcap_geterr(handle));
-        return 3;
+        return NULL;
     }
 
     if (-1 == pcap_setfilter(handle, &fp))
     {
         printf("%s couldn't install filter %s: %s\n", funcName, filter_exp, pcap_geterr(handle));
-        return 3;
+        return NULL;
     }
 
     printf("%s all preparations were successful\n", funcName);
-    return 0;
+    return handle;
 }
 
-void listenerRunLoop()
+void* listenerRunLoop(IN void* arg)
 {
     const char funcName [] = "listenerRunLoop - ";
+    if (NULL == arg)
+    {
+        printf("%s got arg as a NULL pointer\n", funcName);
+        return NULL;
+    }
+
     printf("%s about to start and sniff DNS packets\n", funcName);
-    // GuyA: TODO - change the 2 to be infinte
-    pcap_loop(handle, 2, packet_handler, NULL);
+    pcap_loop(handle, -1, packet_handler, NULL);
+    printf("%s after pcap_loop\n", funcName);
+    return NULL;
 }
 
 int listenerCleanupAfterRunLoop()
