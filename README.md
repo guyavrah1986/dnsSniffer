@@ -1,4 +1,14 @@
 # dnsSniffer
+Linux based that utilizes the libpcap library to sniff DNS response and maintain "in house DB" of 
+addresses it encountered in the sniffed packets.
+
+# Research notes:
+- During the research phase several libraries to capture packets were encountered. For ease of deployment
+, easy usage and popularity reasons - the `libpcap` library was choosed.
+
+# Development environment notes:
+- The application was developed and tested on Ubuntu 20.04 VM with the following:
+* Linux kernel 5.4.0
 
 # Some notes:
 - In case we are doing cross compilation, then need to set a global debug symbol that will indicate whether the
