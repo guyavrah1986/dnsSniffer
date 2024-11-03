@@ -14,6 +14,8 @@
 // TCP/IP protocols related definitions
 // ====================================
 #define ETHERNET_HEADER_SIZE 14
+#define ETHERNET_ETHER_TYPE_IPv4 0x0800
+#define ETHERNET_ETHER_TYPE_IPv6 0x86DD
 #define IPv4_HEADER_SIZE 20
 #define UDP_HEADER_SIZE 8
 
@@ -87,6 +89,8 @@ typedef struct DnsResourceRecord
 // =================
 // Module public API
 // =================
+uint16_t extract16(IN const uint8_t* buffer, IN size_t offset);
+uint32_t extract32(IN const uint8_t* buffer, IN size_t offset);
 size_t parseDnsQuestion(IN const uint8_t* buffer, IN size_t offset, OUT DnsQuestion* dnsQuestion);
 size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourceRecord* dnsResourceRecord);
 int parseDnsResponse(IN const uint8_t* packet);

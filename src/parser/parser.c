@@ -7,19 +7,6 @@
 #include "include/parser.h"
 #include "../utils/include/utils.h"
 
-// Helper function to extract a 16-bit value from a buffer
-static uint16_t extract16(IN const uint8_t* buffer, IN size_t offset)
-{
-    return (buffer[offset] << 8) | buffer[offset + 1];
-}
-
-// Helper function to extract a 32-bit value from a buffer
-static uint32_t extract32(IN const uint8_t* buffer, IN size_t offset)
-{
-    return (buffer[offset] << 24) | (buffer[offset + 1] << 16) |
-           (buffer[offset + 2] << 8) | buffer[offset + 3];
-}
-
 static size_t calculateOffsetToDnsPayload()
 {
     const char funcNmae [] = "parser::calculateOffsetToDnsPayload - ";
@@ -45,6 +32,19 @@ static size_t calculateOffsetToDnsPayload()
 
     printf("%s returning offset:%lu\n", funcNmae, offsetToDnsPayload);
     return offsetToDnsPayload;
+}
+
+// Helper function to extract a 16-bit value from a buffer
+uint16_t extract16(IN const uint8_t* buffer, IN size_t offset)
+{
+    return (buffer[offset] << 8) | buffer[offset + 1];
+}
+
+// Helper function to extract a 32-bit value from a buffer
+uint32_t extract32(IN const uint8_t* buffer, IN size_t offset)
+{
+    return (buffer[offset] << 24) | (buffer[offset + 1] << 16) |
+           (buffer[offset + 2] << 8) | buffer[offset + 3];
 }
 
 // Function to parse QName (domain name)
@@ -131,8 +131,10 @@ int parseDnsResponse(IN const uint8_t* packet)
 
     // 1. Parse the DNS header section
     DnsHeader* dnsHeader = (DnsHeader*)packet;
+    uint16_t transactionId = ntohs(dnsHeader->id);
     uint16_t numOfQuestions = ntohs(dnsHeader->qdcount);
     uint16_t numOfAnswers = ntohs(dnsHeader->ancount);
+    printf("%s transaction ID is:%u\n", funcName, transactionId);
     printf("%s number of questions:%u\n", funcName, numOfQuestions);
     printf("%s number of answers:%u\n", funcName, numOfAnswers);
 
