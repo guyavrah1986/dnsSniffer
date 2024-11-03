@@ -1,6 +1,6 @@
 #include "include/hashTable.h"
 
-int8_t hash(IN const char* key)
+int8_t getHash(IN const char* key)
 {
     if (NULL == key)
     {
@@ -60,7 +60,7 @@ void add_to_list(IN struct node** list, IN const char* value)
 // Insert a key-value pair into the hash table
 void insert(IN hash_table* table, IN const char* key, IN const char* value)
 {
-    unsigned int index = hash(key);
+    unsigned int index = getHash(key);
     hash_entry* entry = table->entries[index];
 
     // Check if the key already exists
@@ -90,7 +90,7 @@ void insert(IN hash_table* table, IN const char* key, IN const char* value)
 // Find the linked list associated with a key
 struct node* find(IN hash_table* table, IN const char* key)
 {
-    unsigned int index = hash(key);
+    unsigned int index = getHash(key);
     hash_entry* entry = table->entries[index];
 
     // Traverse the chain to find the key

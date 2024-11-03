@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdint.h>
 
 #include "utils.h"
@@ -26,7 +28,7 @@ typedef struct hash_table
 Hashing function to retrieve the index to which the key will be inserted
 in the array of hash_entry's.
 */
-int8_t hash(IN const char* key);
+int8_t getHash(IN const char* key);
 hash_table* create_table();
 struct node* create_list_node(IN const char* value);
 void add_to_list(IN struct node** list, IN const char* value);
