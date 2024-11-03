@@ -19,7 +19,8 @@ int8_t hash(IN const char* key)
 }
 
 // Initialize the hash table
-hash_table* create_table() {
+hash_table* create_table()
+{
     hash_table* table = malloc(sizeof(hash_table));
     if (!table) return NULL;
     for (int i = 0; i < HASH_TABLE_SIZE; i++) {
@@ -29,7 +30,8 @@ hash_table* create_table() {
 }
 
 // Create a new linked list node with a string value
-struct node* create_list_node(const char* value) {
+struct node* create_list_node(const char* value)
+{
     struct node* new_node = malloc(sizeof(struct node));
     if (!new_node) return NULL;
     new_node->val = strdup(value);
@@ -38,14 +40,16 @@ struct node* create_list_node(const char* value) {
 }
 
 // Add a value to the linked list
-void add_to_list(struct node** list, const char* value) {
+void add_to_list(struct node** list, const char* value)
+{
     struct node* new_node = create_list_node(value);
     new_node->next = *list;
     *list = new_node;
 }
 
 // Insert a key-value pair into the hash table
-void insert(hash_table* table, const char* key, const char* value) {
+void insert(hash_table* table, const char* key, const char* value)
+{
     unsigned int index = hash(key);
     hash_entry* entry = table->entries[index];
 
@@ -71,7 +75,8 @@ void insert(hash_table* table, const char* key, const char* value) {
 }
 
 // Find the linked list associated with a key
-struct node* find(hash_table* table, const char* key) {
+struct node* find(hash_table* table, const char* key)
+{
     unsigned int index = hash(key);
     hash_entry* entry = table->entries[index];
 
@@ -86,9 +91,9 @@ struct node* find(hash_table* table, const char* key) {
     return NULL;  // Key not found
 }
 
-
 // Display the linked list
-void display_list(struct node* list) {
+void display_list(struct node* list)
+{
     struct node* current = list;
     while (current != NULL) {
         printf("%s -> ", current->val);
@@ -99,7 +104,8 @@ void display_list(struct node* list) {
 
 
 // Display the entire hash table
-void display_table(hash_table* table) {
+void display_table(hash_table* table)
+{
     for (int i = 0; i < HASH_TABLE_SIZE; i++) {
         hash_entry* entry = table->entries[i];
         if (entry != NULL) {
@@ -114,7 +120,8 @@ void display_table(hash_table* table) {
 }
 
 // Free the linked list
-void free_list(struct node* list) {
+void free_list(struct node* list)
+{
     struct node* current = list;
     while (current != NULL) {
         struct node* temp = current;
@@ -125,7 +132,8 @@ void free_list(struct node* list) {
 }
 
 // Free the hash table
-void free_table(hash_table* table) {
+void free_table(hash_table* table) 
+{
     for (int i = 0; i < HASH_TABLE_SIZE; i++) {
         hash_entry* entry = table->entries[i];
         while (entry != NULL) {
