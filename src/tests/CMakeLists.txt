@@ -33,7 +33,7 @@ add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 # tcmalloc - is linked in order to use tcmalloc in the unit tests instead of glibc malloc - only
 # for the sake of using the heap checker feature of the tcmalloc library.
 # All other libraries are project's propriatry libraires that are to be tested.
-target_link_libraries(${testsExeName} ${GTEST_LIBRARY} pthread parserLib utilsLib) #tcmalloc
+target_link_libraries(${testsExeName} ${GTEST_LIBRARY} pthread parserLib utilsLib dataBaseManagerLib) #tcmalloc
 
 # For test covrage:
 message("BUILD_UNIT_TESTS=${BUILD_UNIT_TESTS}")

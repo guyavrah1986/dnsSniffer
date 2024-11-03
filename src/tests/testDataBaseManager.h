@@ -61,3 +61,11 @@ TEST(DataBaseManagerTest, testFindNodeInLinkedListWithTwoNodes)
     ret = find_node(head, value2);
     EXPECT_NE(ret, nullptr);
 }
+
+TEST(DataBaseManagerTest, testCreationAndDestructionOfTheHashTable)
+{
+    int retVal = dataBaseMgrInit();
+    EXPECT_EQ(0, retVal);
+    //ASSERT_NE(googleComHashVal, cnnComHashVal);
+    dataBaseMgrClean();
+}
