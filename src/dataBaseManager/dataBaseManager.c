@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "include/dataBaseManager.h"
 #include "../utils/include/hashTable.h"
 
 // This is the global (per translation unit) hash table.
@@ -21,8 +22,15 @@ int dataBaseMgrInit()
     return 1;
 }
 
-int dataBaseMgrInsertItem()
+int dataBaseMgrInsertItem(IN const DnsResourceRecord* dnsRecordToAdd)
 {
+    const char funcName [] = "dataBaseMgrInsertItem - ";
+    if (NULL == dnsRecordToAdd)
+    {
+        printf("%s dnsRecordToAdd is NULL\n", funcName);
+        return 1;
+    }
+
     return 1;
 }
 

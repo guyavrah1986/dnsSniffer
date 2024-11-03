@@ -238,7 +238,8 @@ int parseDnsResponse(IN const uint8_t* packet)
         offsetToAdd = parseDnsAnswer(packet, 0, &dnsResourceRecord);
         // GuyA: In the case of multiple answers instead of inserting each
         // address at a time, perhapse some kind of "aggragation" mechanism
-        // might be more efficent.
+        // might be more efficent (in particular is the DB is some sort of
+        // entitiy in another machine, such as DB in AWS or some Redis DB)
         // CALL dataBaseMgrInsert()
         packet += offsetToAdd;
     }

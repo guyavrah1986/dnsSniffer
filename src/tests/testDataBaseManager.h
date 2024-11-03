@@ -66,6 +66,10 @@ TEST(DataBaseManagerTest, testCreationAndDestructionOfTheHashTable)
 {
     int retVal = dataBaseMgrInit();
     EXPECT_EQ(0, retVal);
+
+    DnsResourceRecord* dnsRecordToAdd = NULL;
+    int ret= dataBaseMgrInsertItem(dnsRecordToAdd);
+    EXPECT_EQ(1, ret);
     //ASSERT_NE(googleComHashVal, cnnComHashVal);
     dataBaseMgrClean();
 }

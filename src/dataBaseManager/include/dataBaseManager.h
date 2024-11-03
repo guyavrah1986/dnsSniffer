@@ -20,6 +20,8 @@
 // ============================================================================
 #pragma once
 
+#include "../../parser/include/parser.h"
+
 int dataBaseMgrInit();
-int dataBaseMgrInsertItem();
+int dataBaseMgrInsertItem(IN const DnsResourceRecord* dnsRecordToAdd);
 void dataBaseMgrClean();
