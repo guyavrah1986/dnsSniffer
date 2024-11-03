@@ -74,6 +74,7 @@ TEST(DataBaseManagerTest, testCreationAndDestructionOfTheHashTable)
 
     // Insert a concrete key,value to an empty DB (hash table)
     DnsResourceRecord dnsRecordToAdd;
+    memset(&dnsRecordToAdd, 0, sizeof(dnsRecordToAdd));
     dnsRecordToAdd.name = 0x1;
     dnsRecordToAdd.ttl = 140;
     dnsRecordToAdd.type = 1;
@@ -83,7 +84,7 @@ TEST(DataBaseManagerTest, testCreationAndDestructionOfTheHashTable)
     size_t offset = 0;
     sprintf(dnsRecordToAdd.resourceData, "%u.%u.%u.%u", addr[offset], addr[offset + 1], addr[offset + 2], addr[offset + 3]);
     printf("dnsRecordToAdd.resourceData is:%s\n", dnsRecordToAdd.resourceData);
-    
+
     // Verify insertion
     ret = dataBaseMgrInsertItem(key, &dnsRecordToAdd);
     EXPECT_EQ(0, ret);
@@ -92,6 +93,10 @@ TEST(DataBaseManagerTest, testCreationAndDestructionOfTheHashTable)
     // eariler to the DB
     struct node* itemList = dataBaseMgrGetItem(key);
     ASSERT_NE(itemList, nullptr);
+
+    // Make sure the returned list is correct, there is only one item and
+    // its value is known, so check that it is indeed the case
+    EXPECT_STREQ(itemList->val, dnsRecordToAdd.resourceData);
 
     // Clean DB
     dataBaseMgrClean();

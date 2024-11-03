@@ -44,8 +44,7 @@ struct node* dataBaseMgrGetItem(IN const char* key)
         return NULL;
     }
 
-    // struct node* list = find(table, "yahoo.com");
-    return NULL;
+    return find(g_table, key);
 }
 
 void dataBaseMgrClean()
