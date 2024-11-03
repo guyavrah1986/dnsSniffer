@@ -52,7 +52,20 @@ struct node* create_list_node(IN const char* value)
 // Add a value to the linked list
 void add_to_list(IN struct node** list, IN const char* value)
 {
+    const char funcName [] = "add_to_list -";
+    if (NULL == value)
+    {
+        printf("%s value providied is NULL\n", funcName);
+        return;
+    }
+
     struct node* new_node = create_list_node(value);
+    if (NULL == new_node)
+    {
+        printf("%s the node created is NULL, not inserting new element for value:%s\n", funcName, value);
+        return;
+    }
+
     new_node->next = *list;
     *list = new_node;
 }
@@ -60,9 +73,15 @@ void add_to_list(IN struct node** list, IN const char* value)
 // Insert a key-value pair into the hash table
 void insert(IN hash_table* table, IN const char* key, IN const char* value)
 {
+    const char funcName [] = "insert -";
+    if (NULL == key || NULL == value)
+    {
+        printf("%s key and/or value is(are) NULL\n", funcName);
+        return;
+    }
+
     unsigned int index = getHash(key);
     hash_entry* entry = table->entries[index];
-
     // Check if the key already exists
     while (NULL != entry)
     {

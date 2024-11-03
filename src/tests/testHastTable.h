@@ -66,6 +66,11 @@ TEST(HashTableTest, testSanityCreationOfHashTableAndOneCollision)
     printf("Values for yahoo.com: \n");
     display_list(list);
 
+    // Add additional value for one of the "collided" keys
+    insert(table, "yhooa.com", "4.4.4.4");
+    printf("after adding second value for one of the collided keys, the hash table contents:\n");
+    display_table(table);
+
     // Free the hash table
     free_table(table);
 }
@@ -107,13 +112,16 @@ TEST(HashTableTest, testAdditionOfAddressToAnExistingKey)
 
     // Find and display values for a specific key
     insert(table, "yahoo.com", "3.3.3.3");
-
     struct node* list = find(table, "yahoo.com");
     ASSERT_NE(list, nullptr);
-
     printf("Hash table contents after addition to yahoo.com:\n");
     display_table(table);
 
+    // Try to insert the SAME value that already exists for some key
+    insert(table, "google.com", "8.8.8.8");
+    printf("Hash table contents after trying to insert duplicated value to key%s:\n", "google.com");
+    display_table(table);
+    
     // Free the hash table
     free_table(table);
 }
