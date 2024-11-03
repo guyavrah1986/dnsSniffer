@@ -21,4 +21,5 @@
 #pragma once
 
 int dataBaseMgrInit();
+int dataBaseMgrInsertItem();
 void dataBaseMgrClean();

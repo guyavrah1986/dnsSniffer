@@ -21,6 +21,11 @@ int dataBaseMgrInit()
     return 1;
 }
 
+int dataBaseMgrInsertItem()
+{
+    return 1;
+}
+
 void dataBaseMgrClean()
 {
     const char funcName [] = "dataBaseMgrClean -";

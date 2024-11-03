@@ -195,9 +195,16 @@ size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourc
 int parseDnsResponse(IN const uint8_t* packet)
 {
     const char funcName [] = "parseDnsResponse - ";
+    if (NULL == packet)
+    {
+        printf("%s packet is NULL\n", funcName);
+        return -1;
+    }
+
+    // Move the packet to the DNS payload section
     packet = packet + calculateOffsetToDnsPayload();
 
-    // 1. Parse the DNS header section
+    //Parse the DNS header section
     DnsHeader* dnsHeader = (DnsHeader*)packet;
     uint16_t transactionId = ntohs(dnsHeader->id);
     uint16_t numOfQuestions = ntohs(dnsHeader->qdcount);
@@ -206,13 +213,13 @@ int parseDnsResponse(IN const uint8_t* packet)
     printf("%s number of questions:%u\n", funcName, numOfQuestions);
     printf("%s number of answers:%u\n", funcName, numOfAnswers);
 
-    // 2. Parse question
-    // GuyA:It is assumes that the DNS response has only a single question.
+    // Parse question
+    // GuyA:It is assumed that the DNS response has only a single question.
     // If it has more, the function terminates without further processing.
     if (DNS_MAX_NUM_QUESTIONS_PER_RESPONSE < numOfQuestions)
     {
-        printf("%s able to handle a DNS response with ONLY one question, but there are %u, discarding the packet\n", funcName, numOfQuestions);
-        return -1;
+        printf("%s able to handle a DNS response with ONLY one question, but in this case there are %u, discarding the packet\n", funcName, numOfQuestions);
+        return -2;
     }
 
     DnsQuestion dnsQuestion;
@@ -221,14 +228,18 @@ int parseDnsResponse(IN const uint8_t* packet)
     size_t offsetToAdd = parseDnsQuestion(packet, 0, &dnsQuestion);
     packet += offsetToAdd; // Forward buffer to the answers section
 
-    // 3. Parse answers
-    // In this case, we support one or more answers 
+    // Parse answers
+    // In this case, we support several answers 
     offsetToAdd = 0;
     for (uint8_t i = 0; i < numOfAnswers; ++i)
     {
         DnsResourceRecord dnsResourceRecord;
         memset(&dnsResourceRecord, 0, sizeof(dnsResourceRecord));
         offsetToAdd = parseDnsAnswer(packet, 0, &dnsResourceRecord);
+        // GuyA: In the case of multiple answers instead of inserting each
+        // address at a time, perhapse some kind of "aggragation" mechanism
+        // might be more efficent.
+        // CALL dataBaseMgrInsert()
         packet += offsetToAdd;
     }
 
