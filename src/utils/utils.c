@@ -1,18 +1,4 @@
-#include <stdio.h>
-
 #include "include/utils.h"
-
-uint32_t utilsHash(IN const char* str)
-{
-    uint32_t hash = 5381;
-    int c;
-    while ((c = *str++))
-    {
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-    }
-        
-    return hash;
-}
 
 void utilsdisplayDnsName(IN const uint8_t* questionName)
 {
@@ -159,29 +145,3 @@ struct node* find_node(struct node* head, const char* value)
     }
     return NULL;  // Node not found
 }
-
-/*
-void display_list(struct node* head)
-{
-    struct node* current = head;
-    while (current != NULL)
-    {
-        printf("%s--->", current->val);
-        current = current->next;
-    }
-
-    printf("NULL\n");
-}
-
-
-// Function to free the entire linked list
-void free_list(struct node* head)
-{
-    struct node* current = head;
-    while (current != NULL) {
-        struct node* temp = current;
-        current = current->next;
-        free_node(temp);  // Free each node
-    }
-}
-*/

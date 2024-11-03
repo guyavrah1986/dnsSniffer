@@ -14,8 +14,6 @@
 #include "../../utils/include/utils.h"
 
 // Global variables to share with other source files
-// Shared flag to control the loop
-volatile int keepRunning;
 pcap_t* handle;
 
 /*
@@ -43,5 +41,3 @@ Return value:
 Non zero - otherwise.
 */
 int listenerCleanupAfterRunLoop();
-
-void packet_handler(IN unsigned char* user_data, IN const struct pcap_pkthdr* pkthdr, IN const unsigned char* packet);

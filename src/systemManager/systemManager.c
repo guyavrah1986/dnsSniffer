@@ -6,7 +6,7 @@
 #include "../dataBaseManager/include/dataBaseManager.h"
 #include "../utils/include/hashTable.h"
 
-static void systemMgrDisplayUserDomainInfo(const char* domainNameToQuery)
+static void systemMgrDisplayUserDomainInfo(IN const char* domainNameToQuery)
 {
     const char funcName [] = "systemMgrDisplayUserDomainInfo -";
     struct node* listToDisplay = dataBaseMgrGetItem(domainNameToQuery);
@@ -20,22 +20,35 @@ static void systemMgrDisplayUserDomainInfo(const char* domainNameToQuery)
     display_list(listToDisplay);
 }
 
+/*
+This function is the "main UI" function. Its objective is to be the "GUI"
+towards the user that runs this program from a terminal.
+It starts after the system did all of its initializations procedure such
+as intialize the DB, starting the capture on the main interface, etc...
+It asks the user to enter a domain name that he wish to query and displays
+to the screen the reply from the program (i.e. - relevant IP addresses, if any
+are present in the DB).
+This function runs in its own thread, AKA the "UI thread".
+Once the user enters the termination key, the function cancles the pcap loop
+thread and terminates 
+*/
 static void* systemMgrDisplayClientMenu(IN void* arg)
 {
     const char funcName [] = "systemMgrDisplayClientMenu -";
     printf("%s system is listening to DNS responses\n", funcName);
-    char input[256];  // Buffer to store user input
-    pcap_t* handleCopy = (pcap_t*)arg;
+    char input[256];
+    pthread_t* pcapLoopThread = (pthread_t*)arg;
 
     while (1)
     {
-        printf("%s enter a domain name or type 'stop' to end: ", funcName);
+        printf("%s enter a domain name to query or type 'stop' to end: ", funcName);
 
         // Read user input from the terminal
         if (NULL == fgets(input, sizeof(input), stdin))
         {
             // If fgets fails, we should break to avoid an infinite loop
             printf("%s error reading input. Exiting...\n", funcName);
+            pthread_cancel(*pcapLoopThread); 
             return NULL;
         }
 
@@ -46,13 +59,14 @@ static void* systemMgrDisplayClientMenu(IN void* arg)
         if (0 == strcmp(input, "stop"))
         {
             printf("%s signalling to stop the capture loop.\n", funcName);
-            keepRunning = 0;            // Signal to stop capturing
-            pcap_breakloop(handleCopy); // Break out of pcap_loop if it is running
+            
+            // Signal to stop capturing
+            pthread_cancel(*pcapLoopThread); 
             break;
         }
 
         // Otherwise, print the domain name entered
-        printf("You entered: %s\n", input);
+        printf("%s you entered: %s\n", funcName, input);
         systemMgrDisplayUserDomainInfo(input);
     }
 
@@ -69,39 +83,9 @@ static int systemMgrInit()
         printf("%s was unable to initialize the system correctly, aborting\n", funcName);
         return 1;
     }
-
-    keepRunning = 1;
+    
     return 0;
 }
-
-/*
-This function is the "main UI" function. Its objective is to be the "GUI"
-towards the user that runs this program from a terminal.
-It starts after the system did all of its initializations procedure such
-as intialize the DB, starting the capture on the main interface, etc...
-It asks the user to enter a domain name that he wish to query and displays
-to the screen the reply from the program (i.e. - relevant IP addresses, if any
-are present in the DB).
-This function runs in its own thread, AKA the "UI thread".
-Once the user enters the termination key, the function simply terminates.
-
-static void* systemMgrClientThread(void* arg)
-{
-    const char funcName [] = "systemMgrClientThread -";
-    if (NULL == arg)
-    {
-        printf("%s the arg which is the pcap_t handle argument is NULL\n", funcName);
-        return NULL;
-    }
-
-    printf("%s start\n", funcName);
-    sleep(2);
-    printf("%s about to force termination of the pcap_loop\n", funcName);
-    pcap_breakloop((pcap_t*)arg);
-    printf("%s terminating UI thread\n", funcName);
-    return 0;
-}
-*/
 
 static void systemMgrTerminate()
 {
@@ -135,7 +119,7 @@ int systemMgrRunProgram()
     }
 
     printf("%s about to create the UI loop thread\n", funcName);
-    if (0 != pthread_create(&uiThread, NULL, systemMgrDisplayClientMenu, &handleCopy))
+    if (0 != pthread_create(&uiThread, NULL, systemMgrDisplayClientMenu, &listenLoopThread))
     {
         printf("%s failed to create UI loop thread, aborting\n", funcName);
         return -1;
@@ -153,7 +137,6 @@ int systemMgrRunProgram()
     }
 
     printf("%s back on the main thread, after joining both threads\n", funcName);
-    //ret = systemMgrDisplayClientMenu(handleCopy);
 
     // ==================================
     // ==================================

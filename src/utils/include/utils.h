@@ -20,7 +20,7 @@
 #define OUT
 #define INOUT
 
-uint32_t utilsHash(IN const char* str);
+//uint32_t utilsHash(IN const char* str);
 void utilsPrintBytesAscii(IN const uint8_t* byteArr, IN const unsigned short numBytesToDisplay);
 void utilsdisplayDnsName(IN const uint8_t* questionName);
 void utilsGetCmdLineArgs(IN int argc, IN char** argv);

@@ -17,6 +17,33 @@ static const char filter_exp[] = "(udp port 53) && (udp[10] & 0x80 != 0) && (udp
 static pcap_if_t *all_devices;
 static struct bpf_program fp;
 
+static void packet_handler(IN unsigned char* userData, IN const struct pcap_pkthdr* pkthdr, IN const unsigned char* packet)
+{
+    const char funcName [] = "packet_handler - ";
+    if (NULL == userData)
+    {
+        printf("%s userData is NULL (but it is not indeed an issue)\n", funcName);
+    }
+
+    if (NULL == pkthdr)
+    {
+        printf("%s pkthdr is NULL\n", funcName);
+        return;
+    }
+
+    if (NULL == packet)
+    {
+        printf("%s packet is NULL, aborting processing of this packet\n", funcName);
+        return;
+    }
+
+    // Calculate the offset from the begining of the captured frame all the 
+    // way to the DNS payload
+    // GuyA: TODO - check also IPv6 and/or IPv4 with options section!!!
+    int ret = parseDnsResponse(packet);
+    printf("%s parseDnsResponse returned:%d\n", funcName, ret);
+}
+
 pcap_t* listenerPrepareToEnterRunLoop()
 {
     const char funcName [] = "listenerPrepareToEnterRunLoop - ";
@@ -95,29 +122,3 @@ int listenerCleanupAfterRunLoop()
     return 0;
 }
 
-void packet_handler(IN unsigned char* userData, IN const struct pcap_pkthdr* pkthdr, IN const unsigned char* packet)
-{
-    const char funcName [] = "packet_handler - ";
-    if (NULL == userData)
-    {
-        printf("%s userData is NULL (but it is not indeed an issue)\n", funcName);
-    }
-
-    if (NULL == pkthdr)
-    {
-        printf("%s pkthdr is NULL\n", funcName);
-        return;
-    }
-
-    if (NULL == packet)
-    {
-        printf("%s packet is NULL, aborting processing of this packet\n", funcName);
-        return;
-    }
-
-    // Calculate the offset from the begining of the captured frame all the 
-    // way to the DNS payload
-    // GuyA: TODO - check also IPv6 and/or IPv4 with options section!!!
-    int ret = parseDnsResponse(packet);
-    printf("%s parseDnsResponse returned:%d\n", funcName, ret);
-}
