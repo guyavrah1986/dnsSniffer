@@ -11,6 +11,8 @@
 
 #include <pcap.h>
 
+#include "../../utils/include/utils.h"
+
 /*
 This function is performing all the requiered settings and initialization
 in order to start to listen on the main ("default") interface of the machine.
@@ -37,4 +39,4 @@ Non zero - otherwise.
 */
 int listenerCleanupAfterRunLoop();
 
-void packet_handler(unsigned char* user_data, const struct pcap_pkthdr* pkthdr, const unsigned char* packet);
+void packet_handler(IN unsigned char* user_data, IN const struct pcap_pkthdr* pkthdr, IN const unsigned char* packet);

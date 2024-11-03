@@ -33,7 +33,6 @@ int main(int argc, char** argv)
     int ret = componentTestEnterRunLoopAndCaptureSinglePacket();
     printf("%s the componentTestEnterRunLoopAndCaptureSinglePacket function returned:%d\n", funcName, ret);
 
-    
     printf("%s ===END===\n", funcName);
     return 0;
 }

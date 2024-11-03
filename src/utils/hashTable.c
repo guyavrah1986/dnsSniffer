@@ -22,25 +22,35 @@ int8_t hash(IN const char* key)
 hash_table* create_table()
 {
     hash_table* table = malloc(sizeof(hash_table));
-    if (!table) return NULL;
-    for (int i = 0; i < HASH_TABLE_SIZE; i++) {
+    if (NULL == table)
+    {
+        return NULL;
+    }
+
+    for (int i = 0; i < HASH_TABLE_SIZE; ++i)
+    {
         table->entries[i] = NULL;
     }
+
     return table;
 }
 
 // Create a new linked list node with a string value
-struct node* create_list_node(const char* value)
+struct node* create_list_node(IN const char* value)
 {
     struct node* new_node = malloc(sizeof(struct node));
-    if (!new_node) return NULL;
+    if (NULL == new_node)
+    {
+        return NULL;
+    }
+    
     new_node->val = strdup(value);
     new_node->next = NULL;
     return new_node;
 }
 
 // Add a value to the linked list
-void add_to_list(struct node** list, const char* value)
+void add_to_list(IN struct node** list, IN const char* value)
 {
     struct node* new_node = create_list_node(value);
     new_node->next = *list;
@@ -48,18 +58,21 @@ void add_to_list(struct node** list, const char* value)
 }
 
 // Insert a key-value pair into the hash table
-void insert(hash_table* table, const char* key, const char* value)
+void insert(IN hash_table* table, IN const char* key, IN const char* value)
 {
     unsigned int index = hash(key);
     hash_entry* entry = table->entries[index];
 
     // Check if the key already exists
-    while (entry != NULL) {
-        if (strcmp(entry->key, key) == 0) {
+    while (NULL != entry)
+    {
+        if (0 == strcmp(entry->key, key))
+        {
             // Key exists, add value to the linked list
             add_to_list(&entry->value, value);
             return;
         }
+
         entry = entry->next;
     }
 
@@ -75,16 +88,19 @@ void insert(hash_table* table, const char* key, const char* value)
 }
 
 // Find the linked list associated with a key
-struct node* find(hash_table* table, const char* key)
+struct node* find(IN hash_table* table, IN const char* key)
 {
     unsigned int index = hash(key);
     hash_entry* entry = table->entries[index];
 
     // Traverse the chain to find the key
-    while (entry != NULL) {
-        if (strcmp(entry->key, key) == 0) {
+    while (NULL != entry)
+    {
+        if (0 == strcmp(entry->key, key))
+        {
             return entry->value;
         }
+
         entry = entry->next;
     }
 
@@ -92,25 +108,29 @@ struct node* find(hash_table* table, const char* key)
 }
 
 // Display the linked list
-void display_list(struct node* list)
+void display_list(IN struct node* list)
 {
     struct node* current = list;
-    while (current != NULL) {
+    while (NULL != current)
+    {
         printf("%s -> ", current->val);
         current = current->next;
     }
+
     printf("NULL\n");
 }
 
-
 // Display the entire hash table
-void display_table(hash_table* table)
+void display_table(IN hash_table* table)
 {
-    for (int i = 0; i < HASH_TABLE_SIZE; i++) {
+    for (int i = 0; i < HASH_TABLE_SIZE; ++i)
+    {
         hash_entry* entry = table->entries[i];
-        if (entry != NULL) {
+        if (NULL != entry)
+        {
             printf("Index %d:\n", i);
-            while (entry != NULL) {
+            while (NULL != entry)
+            {
                 printf("  Key: %s, Values: ", entry->key);
                 display_list(entry->value);
                 entry = entry->next;
@@ -120,10 +140,11 @@ void display_table(hash_table* table)
 }
 
 // Free the linked list
-void free_list(struct node* list)
+void free_list(IN struct node* list)
 {
     struct node* current = list;
-    while (current != NULL) {
+    while (NULL != current)
+    {
         struct node* temp = current;
         current = current->next;
         free(temp->val);
@@ -132,11 +153,13 @@ void free_list(struct node* list)
 }
 
 // Free the hash table
-void free_table(hash_table* table) 
+void free_table(IN hash_table* table) 
 {
-    for (int i = 0; i < HASH_TABLE_SIZE; i++) {
+    for (int i = 0; i < HASH_TABLE_SIZE; ++i)
+    {
         hash_entry* entry = table->entries[i];
-        while (entry != NULL) {
+        while (NULL != entry)
+        {
             hash_entry* temp = entry;
             entry = entry->next;
 
@@ -145,6 +168,7 @@ void free_table(hash_table* table)
             free(temp);
         }
     }
+    
     free(table);
 }
 

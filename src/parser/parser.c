@@ -18,11 +18,8 @@ typedef enum RecordType
     PARSER_RECORD_TYPE_UNSUPPORTED
 } RecordType;
 
-static void ipv6ToStr(const uint8_t* buffer, size_t startOffset, char resourceData [])
+static void ipv6ToStr(IN const uint8_t* buffer, IN size_t startOffset, OUT char resourceData [])
 {
-    // Ensure the IPv6 address in buffer (starting at startOffset) is properly formatted into resourceData
-    // IPv6 address has 16 bytes, so we will read from buffer[startOffset] to buffer[startOffset + 15]
-
     sprintf(resourceData,
             "%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x",
             buffer[startOffset], buffer[startOffset + 1],
@@ -35,7 +32,7 @@ static void ipv6ToStr(const uint8_t* buffer, size_t startOffset, char resourceDa
             buffer[startOffset + 14], buffer[startOffset + 15]);
 }
 
-static RecordType getRecordType(uint16_t recordTypeVal)
+static RecordType getRecordType(IN const uint16_t recordTypeVal)
 {
     RecordType retVal = PARSER_RECORD_TYPE_UNSUPPORTED;
     switch (recordTypeVal)
@@ -62,8 +59,8 @@ static size_t calculateOffsetToDnsPayload()
     // packet (802.11x) is being handed from the driver to the rest of the
     // network stack, it is being "considered" as a "fake" Ethernet (802.3) 
     // frame. This make sense, becuase WiFi was developed to be the "wireless
-    // Ethernet" --> so in any case, assume the Link layer header is an 
-    // Ethernet frame --> its length is 14 bytes
+    // Ethernet" --> so in any case, from Link layer header length perspective 
+    // assume it is an Ethernet frame --> i.e, length is 14 bytes
     offsetToDnsPayload += ETHERNET_HEADER_SIZE;
 
     // GuyA: In the case of DNS packets that:
@@ -82,20 +79,22 @@ static size_t calculateOffsetToDnsPayload()
 
 static size_t extractRecordAddress(IN const uint8_t* buffer, const RecordType recordType, IN size_t startOffset, OUT char resourceData [])
 {
+    const char funcName [] = "extractRecordAddress - ";
     size_t bytesParsed = 0;
     switch (recordType)
     {
-        case PARSER_RECORD_TYPE_IPv4: sprintf(resourceData, "%u.%u.%u.%u", buffer[startOffset], buffer[startOffset + 1], buffer[startOffset + 2], buffer[startOffset + 3]);
+        case PARSER_RECORD_TYPE_IPv4: printf("%s IPv4 address\n", funcName);
+                                      sprintf(resourceData, "%u.%u.%u.%u", buffer[startOffset], buffer[startOffset + 1], buffer[startOffset + 2], buffer[startOffset + 3]);
                                       bytesParsed = PARSER_IPv4_ADDR_LEN;
                                       break;
-        case PARSER_RECORD_TYPE_IPv6: printf("IPv6 address\n");
+        case PARSER_RECORD_TYPE_IPv6: printf("%s IPv6 address\n", funcName);
                                       ipv6ToStr(buffer, startOffset, resourceData);
                                       bytesParsed = PARSER_IPv6_ADDR_LEN;
                                       break;
-        case PARSER_RECORD_TYPE_CNAME: printf("CNAME address\n");
+        case PARSER_RECORD_TYPE_CNAME: printf("%s CNAME address\n", funcName);
                                        bytesParsed = PARSER_IPv6_ADDR_LEN;
                                        break;
-        default: printf("unsupported record type\n");
+        default: printf("%s unsupported record type\n", funcName);
                  break;
     }
 
@@ -119,32 +118,33 @@ uint32_t extract32(IN const uint8_t* buffer, IN size_t offset)
 size_t parseQName(IN const uint8_t* buffer, IN size_t offset, OUT char* qname)
 {
     size_t pos = offset;
-    size_t name_index = 0;
+    size_t nameIndex = 0;
     while (buffer[pos] != 0)
     {
-        int label_len = buffer[pos++];
-        for (int i = 0; i < label_len; i++)
+        int labelLen = buffer[pos++];
+        for (int i = 0; i < labelLen; ++i)
         {
-            qname[name_index++] = buffer[pos++];
+            qname[nameIndex++] = buffer[pos++];
         }
         
-        qname[name_index++] = '.'; // Separate labels with '.'
+        qname[nameIndex++] = '.'; // Separate labels with '.'
     }
 
-    qname[name_index - 1] = '\0'; // Null-terminate the string and remove last '.'
+    qname[nameIndex - 1] = '\0'; // Null-terminate the string and remove last '.'
     return pos + 1; // Position after QName (0 terminator)
 }
 
 // Function to parse DNS question section
 size_t parseDnsQuestion(IN const uint8_t* buffer, IN size_t offset, OUT DnsQuestion* dnsQuestion)
 {
+    const char funcName [] = "parseDnsQuestion - ";
     offset = parseQName(buffer, offset, dnsQuestion->question);
     uint16_t qtype = extract16(buffer, offset);
     uint16_t qclass = extract16(buffer, offset + 2);
 
-    printf("Question Name: %s\n",  dnsQuestion->question);
-    printf("Question Type: %u\n", qtype);
-    printf("Question Class: %u\n", qclass);
+    printf("%s question Name: %s\n", funcName, dnsQuestion->question);
+    printf("%s question Type: %u\n", funcName, qtype);
+    printf("%s question Class: %u\n", funcName, qclass);
 
     return offset + 4; // Move past QType and QClass
 }
@@ -156,18 +156,17 @@ size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourc
     // of type DNS_PTR_NAME (0xc0) --> so it means that the next byte is the 
     // offset from the begining of the DNS packet, and then there are the 
     // rest of the fields of the DNS answer (record)
-    
+    const char funcName [] = "parseDnsAnswer - ";
     if (DNS_PTR_NAME != buffer[offset])
     {
-        printf("currently only answers with type DNS_PTR_NAME are supported, and this is not the case - aborting parse\n");
+        printf("%s currently only answers with type DNS_PTR_NAME are supported, and this is not the case - aborting parse\n", funcName);
         return 0;
     }
     
     // char name[256];
     //offset = parseQName(buffer, offset, name); // Handle name (could use compression)
     offset += 2;
-    printf("offset is now:%lu\n", offset);
-
+    printf("%s offset is now:%lu\n", funcName, offset);
     dnsResourceRecord->type = extract16(buffer, offset);
     dnsResourceRecord->recordClass = extract16(buffer, offset + 2);
     dnsResourceRecord->ttl = extract32(buffer, offset + 4);
@@ -177,11 +176,11 @@ size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourc
 
     // GuyA: For debug - needs to be removed
     //printf("Answer Name: %s\n", name);
-    printf("Answer Type: %u\n", dnsResourceRecord->type);
-    printf("Answer Class: %u\n", dnsResourceRecord->recordClass);
-    printf("Answer TTL: %u\n", dnsResourceRecord->ttl);
-    printf("Answer RDLength: %u\n", dnsResourceRecord->rdlength);
-    printf("Answer RData: ");
+    printf("%s answer Type: %u\n", funcName, dnsResourceRecord->type);
+    printf("%s answer Class: %u\n", funcName, dnsResourceRecord->recordClass);
+    printf("%s answer TTL: %u\n", funcName, dnsResourceRecord->ttl);
+    printf("%s answer RDLength: %u\n", funcName, dnsResourceRecord->rdlength);
+    printf("%s answer RData:", funcName);
     for (int i = 0; i < dnsResourceRecord->rdlength; ++i)
     {
         printf("%02x ", buffer[offset + i]);
@@ -189,7 +188,7 @@ size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourc
 
     printf("\n");
     size_t numOfBytesParsed = extractRecordAddress(buffer, getRecordType(dnsResourceRecord->type), offset, dnsResourceRecord->resourceData);
-    printf("parsed %lu bytes, the answer as string:%s\n", numOfBytesParsed, dnsResourceRecord->resourceData);
+    printf("%s parsed %lu bytes, the answer as string:%s\n", funcName, numOfBytesParsed, dnsResourceRecord->resourceData);
     return offset + numOfBytesParsed; // Move past RData
 }
 
@@ -232,7 +231,6 @@ int parseDnsResponse(IN const uint8_t* packet)
         offsetToAdd = parseDnsAnswer(packet, 0, &dnsResourceRecord);
         packet += offsetToAdd;
     }
-
 
     return 0;
 
@@ -285,5 +283,4 @@ int parseDnsResponse(IN const uint8_t* packet)
         answer_section += 10 + ntohs(rr->rdlength);
     }
     */
-
 }
