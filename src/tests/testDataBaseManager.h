@@ -69,7 +69,7 @@ TEST(DataBaseManagerTest, testCreationAndDestructionOfTheHashTable)
 
     // Try invalid insertion
     const char key [] = "google.com";
-    int ret= dataBaseMgrInsertItem(key, NULL);
+    int ret = dataBaseMgrInsertItem(key, NULL);
     EXPECT_EQ(1, ret);
 
     // Insert a concrete key,value to an empty DB (hash table)
@@ -82,5 +82,7 @@ TEST(DataBaseManagerTest, testCreationAndDestructionOfTheHashTable)
     const uint8_t addr [] = {0x8e, 0xfa, 0x4b, 0x2e};
     size_t offset = 0;
     sprintf(dnsRecordToAdd.resourceData, "%u.%u.%u.%u", addr[offset], addr[offset + 1], addr[offset + 2], addr[offset + 3]);
+    ret = dataBaseMgrInsertItem(key, &dnsRecordToAdd);
+    EXPECT_EQ(0, ret);
     dataBaseMgrClean();
 }
