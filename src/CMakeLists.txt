@@ -12,7 +12,7 @@ add_executable(${exeName} main.c)
 
 # Link the executable with all relevant libraries, be it propraeitry or 
 # 3rd party
-target_link_libraries(${exeName} PUBLIC parserLib listenerLib utilsLib)
+target_link_libraries(${exeName} PUBLIC parserLib listenerLib utilsLib systemManagerLib)
 
 # Add the binary tree to the search path for include files
 target_include_directories(${exeName} PUBLIC

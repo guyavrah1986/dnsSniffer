@@ -1,29 +1,12 @@
 #include "utils/include/utils.h"
 #include "listener/include/listener.h"
 #include "dataBaseManager/include/dataBaseManager.h"
-
-int systemInit()
-{
-    const char funcName [] = "systemInit - ";
-    int ret = dataBaseMgrInit();
-    if (0 != ret)
-    {
-        printf("%s was unable to initialize the system correctly, aborting\n", funcName);
-        return 1;
-    }
-
-    return 0;
-}
-
-void systemTerminate()
-{
-    dataBaseMgrClean();
-}
+#include "systemManager/include/systemManager.h"
 
 int componentTestEnterRunLoopAndCaptureSinglePacket()
 {
     const char funcName [] = "componentTestEnterRunLoopAndCaptureSinglePacket - ";
-    int ret = systemInit();
+    int ret = systemMgrInit();
     if (0 != ret)
     {
         return -1;
@@ -44,7 +27,7 @@ int componentTestEnterRunLoopAndCaptureSinglePacket()
         return -1;
     }
 
-    systemTerminate();
+    systemMgrTerminate();
     return ret;
 }
 

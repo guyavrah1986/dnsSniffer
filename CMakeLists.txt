@@ -24,6 +24,8 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/src/listener)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/dataBaseManager)
 
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/systemManager)
+
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/tests)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/src)
