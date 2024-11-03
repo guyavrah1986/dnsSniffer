@@ -1,10 +1,7 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-
 #include <arpa/inet.h>
 
 #include "include/parser.h"
+#include "../dataBaseManager/include/dataBaseManager.h"
 
 static void ipv6ToStr(IN const uint8_t* buffer, IN size_t startOffset, OUT char resourceData [])
 {
@@ -229,7 +226,11 @@ int parseDnsResponse(IN const uint8_t* packet)
         // address at a time, perhapse some kind of "aggragation" mechanism
         // might be more efficent (in particular is the DB is some sort of
         // entitiy in another machine, such as DB in AWS or some Redis DB)
-        // CALL dataBaseMgrInsert()
+        if (0 != dataBaseMgrInsertItem(dnsQuestion.question, &dnsResourceRecord))
+        {
+            printf("%s was unable to insert value:%s to key:%s\n", funcName, dnsQuestion.question, dnsResourceRecord.resourceData);
+        }
+        
         packet += offsetToAdd;
     }
 

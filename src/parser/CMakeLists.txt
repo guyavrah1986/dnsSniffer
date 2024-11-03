@@ -10,4 +10,6 @@ add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 #target_compile_options(${libName} PUBLIC -g -O0 -Wall -fprofile-arcs -ftest-coverage)
 #target_link_options(${libName} PUBLIC -fprofile-arcs -ftest-coverage)
 
+target_link_libraries(${libName} PUBLIC dataBaseManagerLib)
+
 message(STATUS "CMakeLists.txt of ${libName} - created library")
