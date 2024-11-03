@@ -7,6 +7,52 @@
 #include "include/parser.h"
 #include "../utils/include/utils.h"
 
+#define PARSER_IPv4_ADDR_LEN 4
+#define PARSER_IPv6_ADDR_LEN 16
+
+typedef enum RecordType
+{
+    PARSER_RECORD_TYPE_IPv4,
+    PARSER_RECORD_TYPE_IPv6,
+    PARSER_RECORD_TYPE_CNAME,
+    PARSER_RECORD_TYPE_UNSUPPORTED
+} RecordType;
+
+static void ipv6ToStr(const uint8_t* buffer, size_t startOffset, char resourceData [])
+{
+    // Ensure the IPv6 address in buffer (starting at startOffset) is properly formatted into resourceData
+    // IPv6 address has 16 bytes, so we will read from buffer[startOffset] to buffer[startOffset + 15]
+
+    sprintf(resourceData,
+            "%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x",
+            buffer[startOffset], buffer[startOffset + 1],
+            buffer[startOffset + 2], buffer[startOffset + 3],
+            buffer[startOffset + 4], buffer[startOffset + 5],
+            buffer[startOffset + 6], buffer[startOffset + 7],
+            buffer[startOffset + 8], buffer[startOffset + 9],
+            buffer[startOffset + 10], buffer[startOffset + 11],
+            buffer[startOffset + 12], buffer[startOffset + 13],
+            buffer[startOffset + 14], buffer[startOffset + 15]);
+}
+
+static RecordType getRecordType(uint16_t recordTypeVal)
+{
+    RecordType retVal = PARSER_RECORD_TYPE_UNSUPPORTED;
+    switch (recordTypeVal)
+    {
+        case 1: retVal = PARSER_RECORD_TYPE_IPv4;
+                 break;
+        case 28: retVal = PARSER_RECORD_TYPE_IPv6;
+                 break;
+        case 5: retVal = PARSER_RECORD_TYPE_CNAME;
+                 break;
+        default: retVal = PARSER_RECORD_TYPE_UNSUPPORTED;
+                 break;
+    }
+
+    return retVal;
+}
+
 static size_t calculateOffsetToDnsPayload()
 {
     const char funcNmae [] = "parser::calculateOffsetToDnsPayload - ";
@@ -32,6 +78,28 @@ static size_t calculateOffsetToDnsPayload()
 
     printf("%s returning offset:%lu\n", funcNmae, offsetToDnsPayload);
     return offsetToDnsPayload;
+}
+
+static size_t extractRecordAddress(IN const uint8_t* buffer, const RecordType recordType, IN size_t startOffset, OUT char resourceData [])
+{
+    size_t bytesParsed = 0;
+    switch (recordType)
+    {
+        case PARSER_RECORD_TYPE_IPv4: sprintf(resourceData, "%u.%u.%u.%u", buffer[startOffset], buffer[startOffset + 1], buffer[startOffset + 2], buffer[startOffset + 3]);
+                                      bytesParsed = PARSER_IPv4_ADDR_LEN;
+                                      break;
+        case PARSER_RECORD_TYPE_IPv6: printf("IPv6 address\n");
+                                      ipv6ToStr(buffer, startOffset, resourceData);
+                                      bytesParsed = PARSER_IPv6_ADDR_LEN;
+                                      break;
+        case PARSER_RECORD_TYPE_CNAME: printf("CNAME address\n");
+                                       bytesParsed = PARSER_IPv6_ADDR_LEN;
+                                       break;
+        default: printf("unsupported record type\n");
+                 break;
+    }
+
+    return bytesParsed;
 }
 
 // Helper function to extract a 16-bit value from a buffer
@@ -87,7 +155,7 @@ size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourc
     // NOTE: The assumption here is that the name field in the answer will be
     // of type DNS_PTR_NAME (0xc0) --> so it means that the next byte is the 
     // offset from the begining of the DNS packet, and then there are the 
-    // rest of the fields of the DNS answer
+    // rest of the fields of the DNS answer (record)
     
     if (DNS_PTR_NAME != buffer[offset])
     {
@@ -104,8 +172,10 @@ size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourc
     dnsResourceRecord->recordClass = extract16(buffer, offset + 2);
     dnsResourceRecord->ttl = extract32(buffer, offset + 4);
     dnsResourceRecord->rdlength = extract16(buffer, offset + 8);
-    offset += 10; // Move past Type, Class, TTL, and RDLength
+    // Move past Type, Class, TTL, and RDLength
+    offset += 10;
 
+    // GuyA: For debug - needs to be removed
     //printf("Answer Name: %s\n", name);
     printf("Answer Type: %u\n", dnsResourceRecord->type);
     printf("Answer Class: %u\n", dnsResourceRecord->recordClass);
@@ -117,11 +187,10 @@ size_t parseDnsAnswer(IN const uint8_t* buffer, IN size_t offset, OUT DnsResourc
         printf("%02x ", buffer[offset + i]);
     }
 
-    // GuyA: for now, assume address is a legitimate IPv4 address
-    sprintf(dnsResourceRecord->resourceData, "%u.%u.%u.%u", buffer[offset], buffer[offset + 1], buffer[offset + 2], buffer[offset + 3]);
     printf("\n");
-    printf("Answer as string:%s\n", dnsResourceRecord->resourceData);
-    return offset + dnsResourceRecord->rdlength; // Move past RData
+    size_t numOfBytesParsed = extractRecordAddress(buffer, getRecordType(dnsResourceRecord->type), offset, dnsResourceRecord->resourceData);
+    printf("parsed %lu bytes, the answer as string:%s\n", numOfBytesParsed, dnsResourceRecord->resourceData);
+    return offset + numOfBytesParsed; // Move past RData
 }
 
 int parseDnsResponse(IN const uint8_t* packet)

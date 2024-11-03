@@ -207,3 +207,46 @@ TEST(ParserTests, parseSingleDnsResponsePacketVerifyIpv4WithOptionsSection)
     printf("transactionId extracted from packet is:%u\n", transactionId);
     EXPECT_EQ(transactionId, expectedTransactionId);
 }
+
+TEST(ParserTests, parseSingleDnsResponsePacketWithIpv6InAnswer)
+{ 
+    uint8_t dnsPacket[] =
+    {
+        0x5A, 0x3C, // transaction
+        0x81, 0x80, // flags
+        0x00, 0x01, // Questions count
+        0x00, 0x01, // Answers count
+        0x00, 0x00, // Authority records count (NS)
+        0x00, 0x00, // Additional records count
+
+        // Query
+        0x06, 0x67, 0x6F, 0x6F,
+        0x67, 0x6C, 0x65, 0x03, 0x63, 0x6F, 0x6D, 0x00, 
+        0x00, 0x1C, 0x00, 0x01,
+
+        // Answer
+        0xC0, 0x0C, 0x00, 0x1C, 0x00, 0x01,
+        0x00, 0x00, 0x00, 0x8C, 0x00, 0x10, 
+        0x2A, 0x00, 0x14, 0x50, 0x40, 0x28, 0x08, 0x05, 
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0x0E
+    };
+
+    uint16_t expectedTransactionId = 23100;
+    uint16_t transactionId = extract16(dnsPacket, 0);
+    printf("transactionId extracted from packet is:%u\n", transactionId);
+    EXPECT_EQ(transactionId, expectedTransactionId);
+
+
+    // Move the buffer over the header and question sections
+    size_t offset = 28; 
+    DnsResourceRecord dnsResourceRecord;
+    memset(&dnsResourceRecord, 0, sizeof(dnsResourceRecord));
+    size_t retVal = parseDnsAnswer(dnsPacket, offset, &dnsResourceRecord);
+    printf("returned %lu bytes that were parsed\n", retVal);
+    uint16_t expectedRecordClass = 1;
+    uint16_t expectedTtl = 140;
+    uint16_t expectedRdlength = 16;
+    EXPECT_EQ(expectedRecordClass, dnsResourceRecord.recordClass);
+    EXPECT_EQ(expectedTtl, dnsResourceRecord.ttl);
+    EXPECT_EQ(expectedRdlength, dnsResourceRecord.rdlength);
+}
