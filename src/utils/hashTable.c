@@ -88,6 +88,13 @@ void insert(IN hash_table* table, IN const char* key, IN const char* value)
         if (0 == strcmp(entry->key, key))
         {
             // Key exists, add value to the linked list
+            // only if the value is NOT already present
+            if (0 == find_in_list(entry->value, value))
+            {
+                printf("%s key:%s already has the value:%s\n", funcName, key, value);
+                return;
+            }
+            
             add_to_list(&entry->value, value);
             return;
         }
@@ -124,6 +131,23 @@ struct node* find(IN hash_table* table, IN const char* key)
     }
 
     return NULL;  // Key not found
+}
+
+// Check if value is already present in some key list's
+int find_in_list(IN struct node* list, IN const char* value)
+{
+    struct node* tmp = list;
+    while (NULL != tmp)
+    {
+        if (0 == strcmp(tmp->val, value))
+        {
+            return 0;
+        }
+
+        tmp = tmp->next;
+    }
+
+    return 1;
 }
 
 // Display the linked list

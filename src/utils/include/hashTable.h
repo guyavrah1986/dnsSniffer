@@ -34,6 +34,7 @@ struct node* create_list_node(IN const char* value);
 void add_to_list(IN struct node** list, IN const char* value);
 void insert(IN hash_table* table, IN const char* key, IN const char* value);
 struct node* find(IN hash_table* table, IN const char* key);
+int find_in_list(IN struct node* list, IN const char* value);
 void display_list(IN struct node* list);
 void display_table(IN hash_table* table);
 void free_list(IN struct node* list);

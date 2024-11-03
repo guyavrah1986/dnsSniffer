@@ -119,9 +119,9 @@ TEST(HashTableTest, testAdditionOfAddressToAnExistingKey)
 
     // Try to insert the SAME value that already exists for some key
     insert(table, "google.com", "8.8.8.8");
-    printf("Hash table contents after trying to insert duplicated value to key%s:\n", "google.com");
+    printf("Hash table contents after trying to insert duplicated value:%s to key:%s:\n", "8.8.8.8", "google.com");
     display_table(table);
-    
+
     // Free the hash table
     free_table(table);
 }
