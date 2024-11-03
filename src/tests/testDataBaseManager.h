@@ -46,12 +46,15 @@ TEST(DataBaseManagerTest, testFindNodeInLinkedListWithTwoNodes)
     // Create and add the first node
     const char value1 [] = "8.8.8.8";
     insert_end(&head, value1);
+    EXPECT_NE(head, nullptr);
+    display_list(head);
 
     // Create the second node
     const char value2 [] = "142.251.142.206";
     insert_end(&head, value2);
+    EXPECT_STREQ(head->val, value1);
 
-    //display_list(head);
+    display_list(head);
     // Find first element
     struct node* ret = find_node(head, value1);
     EXPECT_NE(ret, nullptr);
