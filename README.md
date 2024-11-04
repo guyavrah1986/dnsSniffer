@@ -17,6 +17,7 @@ addresses it encountered in the sniffed packets.
 - `cmake` version used: 3.16.3
 - `make` version used: 4.2.1
 - `C/C++` versions used: C11/C++20
+- `Docker` version used: 27.3.1, build ce12230
 
 # Build notes:
 - In order to build the application (and other relevant artifacts), you can use the `buildScript.sh` located
