@@ -39,8 +39,7 @@ typedef struct DnsHeader
 {
   uint16_t id;
   struct flags
-  { // GuyA: assuming there will not be PDP machine in production
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+  {
     uint16_t rcode  : 4;
     uint16_t z      : 3;
     uint16_t ra     : 1;
@@ -49,16 +48,6 @@ typedef struct DnsHeader
     uint16_t aa     : 1;
     uint16_t opcode : 4;
     uint16_t qr     : 1;
-#else
-    uint16_t qr     : 1;
-    uint16_t opcode : 4;
-    uint16_t aa     : 1;
-    uint16_t tc     : 1;
-    uint16_t rd     : 1;
-    uint16_t ra     : 1;
-    uint16_t z      : 3;
-    uint16_t rcode  : 4;
-#endif  /* __LITTLE_ENDIAN */
   } flags;
   uint16_t qdcount;
   uint16_t ancount;
