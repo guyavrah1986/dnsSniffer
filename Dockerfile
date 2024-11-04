@@ -2,7 +2,7 @@
 FROM ubuntu:22.04
 
 # Set a label for the image
-LABEL description="Ubuntu 22.04 with CMake and GCC installed"
+LABEL description="Ubuntu 22.04 with CMake, GCC, libpcap (and libdbus), GTest and dnsutils (dig) installed"
 
 SHELL ["/bin/bash", "-c"]
 
@@ -10,12 +10,10 @@ SHELL ["/bin/bash", "-c"]
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
-    gcc \
-    g++ \
-    make \
     libpcap-dev \
     libgtest-dev \
     libdbus-1-dev \
+    dnsutils \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the project sources into the container image

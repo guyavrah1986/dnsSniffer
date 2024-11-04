@@ -2,7 +2,7 @@
 # ===================================================
 set(libName "systemManagerLib")
 
-add_library(${libName} STATIC systemManager.c)
+add_library(${libName} SHARED systemManager.c)
 
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
