@@ -9,6 +9,7 @@
 static void systemMgrDisplayUserDomainInfo(IN const char* domainNameToQuery)
 {
     const char funcName [] = "systemMgrDisplayUserDomainInfo -";
+    pthread_mutex_lock(&g_dataBaseMutex);
     struct node* listToDisplay = dataBaseMgrGetItem(domainNameToQuery);
     if (NULL == listToDisplay)
     {
@@ -18,6 +19,7 @@ static void systemMgrDisplayUserDomainInfo(IN const char* domainNameToQuery)
 
     printf("%s domain name:%s has the following addresses\n", funcName, domainNameToQuery);
     display_list(listToDisplay);
+    pthread_mutex_unlock(&g_dataBaseMutex);
 }
 
 /*

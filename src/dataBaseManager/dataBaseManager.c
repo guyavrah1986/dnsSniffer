@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <pthread.h>
 
 #include "include/dataBaseManager.h"
 #include "../utils/include/hashTable.h"
@@ -8,9 +9,18 @@
 // the program.
 static hash_table* g_table;
 
+// Used to share the DB with the UI thread for synchronized access
+pthread_mutex_t g_dataBaseMutex = PTHREAD_MUTEX_INITIALIZER;
+
 int dataBaseMgrInit()
 {
     const char funcName [] = "dataBaseMgrInit -";
+    if (0 != pthread_mutex_init(&g_dataBaseMutex, NULL))
+    {
+        printf("%s mutex initialization failed\n", funcName);
+        return 1;
+    }
+
     g_table = create_table();
     if (NULL != g_table)
     {
@@ -31,7 +41,10 @@ int dataBaseMgrInsertItem(IN const char* key, IN const DnsResourceRecord* dnsRec
         return 1;
     }
 
+    // GuyA: Lock writing
+    pthread_mutex_lock(&g_dataBaseMutex);
     insert(g_table, key, dnsRecordToAdd->resourceData);
+    pthread_mutex_unlock(&g_dataBaseMutex);
     return 0;
 }
 
@@ -44,12 +57,16 @@ struct node* dataBaseMgrGetItem(IN const char* key)
         return NULL;
     }
 
+    // GuyA: If we add here copy of the returned list, then the lock in the
+    // case of reading can end here and not later in a "larger scope" that 
+    // increments the critical section
     return find(g_table, key);
 }
 
 void dataBaseMgrClean()
 {
     const char funcName [] = "dataBaseMgrClean -";
+    pthread_mutex_destroy(&g_dataBaseMutex);
     free_table(g_table);
     printf("%s hash table was free-ed successfully\n", funcName);
 }
