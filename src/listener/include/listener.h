@@ -13,9 +13,6 @@
 
 #include "../../utils/include/utils.h"
 
-// Global variables to share with other source files
-pcap_t* handle;
-
 /*
 This function is performing all the requiered settings and initialization
 in order to start to listen on the main ("default") interface of the machine.

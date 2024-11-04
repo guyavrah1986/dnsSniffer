@@ -83,7 +83,7 @@ static int systemMgrInit()
         printf("%s was unable to initialize the system correctly, aborting\n", funcName);
         return 1;
     }
-    
+
     return 0;
 }
 
@@ -112,7 +112,7 @@ int systemMgrRunProgram()
     }
 
     printf("%s about to create the listen loop thread\n", funcName);
-    if (0 != pthread_create(&listenLoopThread, NULL, listenerRunLoop, &handleCopy))
+    if (0 != pthread_create(&listenLoopThread, NULL, listenerRunLoop, NULL))
     {
         printf("%s failed to create listen loop thread, aborting\n", funcName);
         return -1;

@@ -8,12 +8,14 @@ SHELL ["/bin/bash", "-c"]
 
 # Update the package list and install cmake and gcc
 RUN apt-get update && apt-get install -y \
+    build-essential \
     cmake \
     gcc \
     g++ \
     make \
     libpcap-dev \
     libgtest-dev \
+    libdbus-1-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the project sources into the container image

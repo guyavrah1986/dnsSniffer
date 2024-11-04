@@ -14,6 +14,7 @@
 static const char filter_exp[] = "(udp port 53) && (udp[10] & 0x80 != 0) && (udp[11] & 0x0F == 0)";
 
 // Global variables of this module:
+static pcap_t* handle;
 static pcap_if_t *all_devices;
 static struct bpf_program fp;
 
@@ -103,7 +104,6 @@ void* listenerRunLoop(IN void* arg)
     if (NULL == arg)
     {
         printf("%s got arg as a NULL pointer\n", funcName);
-        return NULL;
     }
 
     printf("%s about to start and sniff DNS packets\n", funcName);
