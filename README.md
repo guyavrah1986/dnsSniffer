@@ -1,6 +1,6 @@
 # dnsSniffer
-Linux based that utilizes the libpcap library to sniff DNS response and maintain "in house DB" of 
-addresses it encountered in the sniffed packets.
+Linux based C application that utilizes the `libpcap` library to sniff DNS response packets and maintain "in house DB" of 
+addresses for domains it encountered in the sniffed packets.
 
 # Research notes:
 - During the research phase several libraries to capture packets were encountered (such as DPDK). For ease of deployment
@@ -17,12 +17,12 @@ addresses it encountered in the sniffed packets.
 - `cmake` version used: 3.16.3
 - `make` version used: 4.2.1
 - `C/C++` versions used: C11/C++20
-- `Docker` version used: 27.3.1, build ce12230
+- `Docker` engine version used: 27.3.1, build ce12230
 
 # Build notes:
 - In order to build the application (and other relevant artifacts), you can use the `buildScript.sh` located
 on the root folder of the repo, for example: `$~/path/to/dnssniffer/buildScript.sh`
-- The executable will be located under: `$~/path/to/dnsSniffer/build/src/dnsSniffer.out`
+- Once the build termionates, the executable will be located under: `$~/path/to/dnsSniffer/build/src/dnsSniffer.out`
 - One additional artifact is the: `$~/path/to/dnsSniffer/build/src/tests/unitTestsExe.out`
 
 # Deployment environment notes:
@@ -34,6 +34,7 @@ folder `/project` and run the `buildScript.sh` as mentioned above.
 
 # Testing notes:
 - In order to unit-test the code, the `GTest` library was installed on the development machine.
+- You can run them by invoking the `unitTestsExe.out` (see below).
 
 # How to use it:
 - 1) Navigate to the root folder of the repo (it probably will be called dnsSniffer)
@@ -50,19 +51,13 @@ systemMgrDisplayUserDomainInfo - domain name:cnn.com has the following addresses
 systemMgrDisplayClientMenu - enter a domain name to query or type 'stop' to end:
 - 7) Finally, enter `stop` to terminate the program (or close it with Ctrl+C)
 
-
-# Was is missing:
+# What is missing:
 - Support DNS response with CNAME record type.
 - Capturing DNS responses that ride on top of IPv6.
 
 # Some notes/TODOs:
-- In case cross compilation is being conducted, then need to set a global debug symbol that will indicate whether the
-target machine is little or big endian.
-
 - Before deploying the software, the build script can also run some unit tests (after it builds the software).
 However, it will that later the unit test package along with all of its "left overs" will be removed.
-
-- My usage in multi threading was very basic here, not sure that way the pcap_loop and the UI thread are managed
+- My usage in multi threading was very basic here, not sure that the way the `pcap_loop` and the UI thread are managed
 and implemented is optimal.
-
-- There are several places in the code in which I left a "TODO/explanation note". Filter the string "GuyA:" to check them all.
+- There are several places in the code in which I left a "TODO/explanation" note. Filter the string "GuyA:" to check them all.
