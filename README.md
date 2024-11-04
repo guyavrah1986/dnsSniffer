@@ -29,6 +29,8 @@ on the root folder of the repo, for example: `$~/path/to/dnssniffer/buildScript.
 - The final executable ran on the development machine. Also, it was built, unit-tested, and ran a naive run
 on a Docker based container that its Docker file you can find in the root folder of the repo. Note, however, 
 that the application was not really tested on this Docker image.
+- In order to build the project on the Docker container, build the Docker image, log into it, navigate to the
+folder `/project` and run the `buildScript.sh` as mentioned above.
 
 # Testing notes:
 - In order to unit-test the code, the `GTest` library was installed on the development machine.
